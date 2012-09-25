@@ -1,6 +1,7 @@
 package lu.snt.iot.serval.rn12.hcs.cmp;
 
 import org.kevoree.annotation.*;
+import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
 
@@ -72,15 +73,26 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         ((MessagePort)getPortByName("eclProvider")).process(alert);
     }
 
+    private void deployProxy() {
+        KevScriptEngine engine = getKevScriptEngineFactory().createKevScriptEngine();
+        engine.append("merge \"mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/{kevoree.version}\"");
+        engine.append("addComponent input@node0 : NodeJSProxy { ip=\"192.168.1.217\",port=\"8667\",remotePort=\"80\" }");
+    }
+
     @Port(name="textReceived")
     public void onMessageReceived(Object o) {
         Map<String, Object> alert = (Map<String,Object>)o;
 
-        if(alert.containsKey("text.id")){
+        if(alert.containsKey("text.id")) {
             int textId = (Integer)alert.get("text.id");
             int newTextId = textId+1;
             System.out.println("HCS::MessageReceived: msg->" + (String)alert.get("text." + textId + ".response"));
             if(!alert.containsKey("ecl.accepted")) {
+
+                deployProxy();
+
+
+
                 if(((String)alert.get("text." + textId + ".response")).toLowerCase().contains("yes")) {
 
                     alert.put("text.id",newTextId);
@@ -89,7 +101,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
                     if(alert.containsKey("text."+textId+".xmpp")) {
                         alert.put("text."+newTextId+".xmpp",alert.get("text."+textId+".xmpp"));
                     }
-                    alert.put("text."+newTextId+".content", "The code to get in is: 1337");
+                    alert.put("text."+newTextId+".content", "The code to get in is: C0369X. You can also see what is happening on http://urls.fr/help");
                     alert.put("ecl.accepted",textId);
                     ((MessagePort)getPortByName("extCom")).process(alert);
 

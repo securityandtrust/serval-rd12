@@ -6,7 +6,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
-import org.kevoree.library.FakeConsole;
 import org.kevoree.library.xmpp.mngr.ConnectionManager;
 
 import javax.swing.*;
@@ -28,7 +27,7 @@ import java.util.Hashtable;
 @Library(name = "Serval_RN12")
 public class Modem extends AbstractComponentType {
 
-    private FakeConsole console;
+    //private FakeConsole console;
     private ConnectionManager connection;
 
     public Modem() {
@@ -46,7 +45,7 @@ public class Modem extends AbstractComponentType {
                     if (isPortBinded("msgReceived")) {
                         MessagePort answer = (MessagePort) getPortByName("msgReceived");
                         if(isPositive(message.getBody())) {
-                        alert.put("text."+textId+".response","Yes");
+                            alert.put("text."+textId+".response","Yes");
                         } else {
                             alert.put("text."+textId+".response","No");
                         }

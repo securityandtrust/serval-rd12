@@ -40,7 +40,7 @@ public class EmergencyCallList extends org.kevoree.framework.AbstractComponentTy
 
 
             alert.put("ecl.0.name", "Grégory");
-            alert.put("ecl.0.number", "4666445250");
+            alert.put("ecl.0.number", "621159813");
             alert.put("ecl.0.xmpp", "sntlabphone01@entimid.org");
             alert.put("ecl.1.name", "Patrice");
             alert.put("ecl.1.number", "4666445250");

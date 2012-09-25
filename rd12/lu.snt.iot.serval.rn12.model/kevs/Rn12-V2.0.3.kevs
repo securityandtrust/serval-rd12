@@ -1,0 +1,80 @@
+ {
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.grapher/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.gossiperNetty/{kevoree.version}'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nioChannels/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.api/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.spray/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.socketChannels/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.tjws/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel.atom/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.serialCT/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.etherpad/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.0.0-SNAPSHOT'
+addNode node0:JavaSENode
+ {
+  addComponent HomeCareS678@node0 : HomeCareSystem {}
+  addComponent KarotzCmp103@node0 : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+  addComponent Emergency131@node0 : EmergencyCallList {}
+  addComponent PersonalH306@node0 : PersonalHealthRecord {}
+  addComponent Modem221@node0 : Modem {login='entimid@gmail.com',password='entimidpass'}
+  addComponent FakeSimpl993@node0 : FakeSimpleSwitch {}
+addChannel defMSG603 : defMSG {}
+addChannel defMSG505 : defMSG {}
+addChannel defMSG12 : defMSG {}
+addChannel defMSG338 : defMSG {}
+addChannel defMSG442 : defMSG {}
+addChannel defMSG917 : defMSG {}
+addChannel defMSG392 : defMSG {}
+addChannel defMSG819 : defMSG {}
+addChannel defMSG470 : defMSG {}
+bind KarotzCmp103.tts@node0 => defMSG603
+bind HomeCareS678.intCom@node0 => defMSG603
+bind Emergency131.ECL@node0 => defMSG505
+bind HomeCareS678.ecl@node0 => defMSG505
+bind HomeCareS678.eclProvider@node0 => defMSG12
+bind Emergency131.getList@node0 => defMSG12
+bind PersonalH306.getRecord@node0 => defMSG338
+bind HomeCareS678.phrProvider@node0 => defMSG338
+bind HomeCareS678.phr@node0 => defMSG442
+bind PersonalH306.PHR@node0 => defMSG442
+bind HomeCareS678.needHelp@node0 => defMSG917
+bind HomeCareS678.doorSensor@node0 => defMSG392
+bind HomeCareS678.extCom@node0 => defMSG819
+bind HomeCareS678.textReceived@node0 => defMSG470
+bind Modem221.sendWithAck@node0 => defMSG819
+bind Modem221.msgReceived@node0 => defMSG470
+bind FakeSimpl993.on@node0 => defMSG917
+updateDictionary defMSG603 
+updateDictionary defMSG505 
+updateDictionary defMSG12 
+updateDictionary defMSG338 
+updateDictionary defMSG442 
+updateDictionary defMSG917 
+updateDictionary defMSG392 
+updateDictionary defMSG819 
+updateDictionary defMSG470 
+updateDictionary HomeCareS678@node0 
+updateDictionary KarotzCmp103@node0 
+updateDictionary Emergency131@node0 
+updateDictionary PersonalH306@node0 
+updateDictionary Modem221@node0 
+updateDictionary FakeSimpl993@node0 
+}
+
+addGroup sync:NanoRestGroup
+addToGroup sync node0
+}

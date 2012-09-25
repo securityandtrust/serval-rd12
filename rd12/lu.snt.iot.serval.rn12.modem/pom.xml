@@ -13,16 +13,37 @@
     <artifactId>lu.snt.iot.serval.rn12.modem</artifactId>
     <name>Serval::ResearchersNights::Modem</name>
 
+    <!--
+    <properties>
+        <kevoree.include>org.kevoree.extra.xmpp.lib:*</kevoree.include>
+        <kevoree.include>org.kevoree.extra:org.kevoree.extra.osgi.rxtx</kevoree.include>
+    </properties>
+-->
     <dependencies>
         <dependency>
-            <groupId>org.kevoree.library.javase</groupId>
+            <groupId>org.kevoree.corelibrary.javase</groupId>
             <artifactId>org.kevoree.library.javase.fakeDomo</artifactId>
-            <version>1.6.0-BETA6</version>
+            <version>${kevoree.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.library.javase</groupId>
             <artifactId>org.kevoree.library.javase.xmpp</artifactId>
-            <version>1.7.0-BETA1</version>
+            <version>${kevoree.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.kevoree.extra</groupId>
+            <artifactId>rxtx</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.extra</groupId>
+            <artifactId>org.kevoree.extra.osgi.rxtx</artifactId>
+            <version>2.2.1</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.kevoree.extra</groupId>
+            <artifactId>org.kevoree.extra.kserial</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
 

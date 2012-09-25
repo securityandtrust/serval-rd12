@@ -20,7 +20,7 @@
   <name>Serval::ResearchersNights::ROOT</name>
 
     <properties>
-        <kevoree.version>1.7.0-RC2</kevoree.version>
+        <kevoree.version>1.8.7</kevoree.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- EXAMPLE FOR MYSQL -->
         <sonar.jdbc.url>
@@ -108,6 +108,10 @@
             <id>serval-snapshots</id>
             <url>http://archibald.uni.lu/maven/serval-snapshots</url>
         </repository>
+        <repository>
+            <id>serval-releases</id>
+            <url>http://archibald.uni.lu/maven/serval-releases/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -120,12 +124,39 @@
             <url>http://maven.kevoree.org/snapshots</url>
         </pluginRepository>
     </pluginRepositories>
-    
-    <distributionManagement>
-    <snapshotRepository>
-      <id>serval-snapshots</id>
-      <url>http://archibald.uni.lu:3008/archiva/repository/serval-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
+
+
+    <profiles>
+        <profile>
+            <id>Local Deploy</id>
+            <activation><activeByDefault>true</activeByDefault></activation>
+            <distributionManagement>
+            <repository>
+                <id>serval-releases-local</id>
+                <url>file://${user.home}/.m2/repository</url>
+            </repository>
+            <snapshotRepository>
+                <id>serval-snapshots-local</id>
+                <url>file://${user.home}/.m2/repository</url>
+            </snapshotRepository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>Server Deploy</id>
+            <distributionManagement>
+            <repository>
+                <id>serval-releases</id>
+                <url>http://archibald.uni.lu:3008/archiva/repository/serval-releases/</url>
+            </repository>
+                <snapshotRepository>
+                    <id>serval-snapshots</id>
+                    <url>http://archibald.uni.lu:3008/archiva/repository/serval-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+
+
 
 </project>
