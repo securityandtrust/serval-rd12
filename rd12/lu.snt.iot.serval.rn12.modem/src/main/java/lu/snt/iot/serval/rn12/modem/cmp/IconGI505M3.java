@@ -76,7 +76,7 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
         try {
 
             System.out.println("IconGI505::Getting ComPortIdentifier for " + serialPortName );
-            serial = new SerialPort("/dev/wmodem0", 19200);
+            serial = new SerialPort(serialPortName, 19200);
             System.out.println("IconGI505::Got ComPortIdentifier for " + serialPortName );
             serial.addEventListener(this);
             System.out.println("IconGI505::Listener Registered");
@@ -185,13 +185,14 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
         try {
 
             System.out.println("IconGI505::Getting ComPortIdentifier for " + serialPortName);
-            serial = new SerialPort("/dev/wmodem0", 19200);
+            serial = new SerialPort(serialPortName, 19200);
             System.out.println("IconGI505::Got ComPortIdentifier for " + serialPortName );
             serial.addEventListener(this);
             System.out.println("IconGI505::Listener Registered");
             serial.open();
             System.out.println("IconGI505::Connection Opened");
 
+            /*
             serial.write("ATE0\r\n".getBytes());
             logger.log(Level.INFO, "Sent:" + "ATE0");
 
@@ -201,32 +202,32 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
                 answer.append(readLine());
             }
             logger.log(Level.INFO, "Answered:" + answer.toString());
+            */
 
             serial.write("AT+CPIN?\r\n".getBytes());
-            logger.log(Level.INFO, "Sent:" + "AT+CPIN?\r\n");
-
-
-
-            answer.append(readLine());
-            logger.log(Level.INFO, "Answered:" + answer.toString());
+            StringBuffer answer = new StringBuffer();
+            do{
+                answer.append(readLine());
+                System.out.println("IconGI505::" + answer);
+            } while(!answer.toString().contains("+CPIN: SIM PIN") && !answer.toString().contains("OK"));
 
             if (answer.toString().contains("+CPIN: SIM PIN")) {
                 serial.write(("AT+CPIN=\"" + pin + "\"\r\n").getBytes());
-                Thread.sleep(50);
                 answer = new StringBuffer();
                 do {
                     answer.append(readLine());
+                    System.out.println("IconGI505::" + answer);
                 } while (!answer.toString().contains("OK"));
-                logger.log(Level.INFO, "Answered:" + answer.toString());
             }
 
             serial.write("AT+CMGF=1\r\n".getBytes());
-            Thread.sleep(50);
             answer = new StringBuffer();
             do {
                 answer.append(readLine());
+                System.out.println("IconGI505::" + answer);
             } while (!answer.toString().contains("OK"));
-            logger.log(Level.INFO, "Answered:" + answer.toString());
+
+            System.out.println("IconGI505::Modem ready");
 
             serial.close();
 

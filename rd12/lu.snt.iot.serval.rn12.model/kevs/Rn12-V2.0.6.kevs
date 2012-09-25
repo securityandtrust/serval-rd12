@@ -1,17 +1,17 @@
  {
-merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
-merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}'
-merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/{kevoree.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
-merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/{kevoree.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
 merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.0.0-SNAPSHOT'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
 merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}'
 merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
 addNode node0:JavaSENode
  {
   addComponent TYXIA142990@node0 : TYXIA142 {device_id='168257'}
@@ -20,7 +20,8 @@ addNode node0:JavaSENode
   addComponent Emergency131@node0 : EmergencyCallList {}
   addComponent PersonalH306@node0 : PersonalHealthRecord {}
   addComponent Modem17@node0 : Modem {login='entimid@gmail.com',password='entimidpass'}
-  addComponent IconGI505553@node0 : IconGI505M {serialPort='/dev/wmodem0',pincode='1828'}
+  addComponent IconGI505550@node0 : IconGI505M3 {serialPort='/dev/wmodem0',pincode='1828'}
+  addComponent TYDOM360568@node0 : TYDOM360 {serialPortName='/dev/ttyACM0'}
 addChannel defMSG888 : defMSG {}
 addChannel defMSG570 : defMSG {}
 addChannel defMSG145 : defMSG {}
@@ -50,8 +51,9 @@ bind HomeCareS678.extCom@node0 => defMSG752
 bind HomeCareS678.textReceived@node0 => defMSG576
 bind Modem17.msgReceived@node0 => defMSG576
 bind Modem17.sendWithAck@node0 => defMSG752
-bind IconGI505553.msgReceived@node0 => defMSG576
-bind IconGI505553.sendWithAck@node0 => defMSG752
+bind IconGI505550.msgReceived@node0 => defMSG576
+bind IconGI505550.sendWithAck@node0 => defMSG752
+bind TYDOM360568.receive@node0 => defMSG888
 updateDictionary defMSG888 
 updateDictionary defMSG570 
 updateDictionary defMSG145 
@@ -68,7 +70,8 @@ updateDictionary KarotzCmp103@node0
 updateDictionary Emergency131@node0 
 updateDictionary PersonalH306@node0 
 updateDictionary Modem17@node0 
-updateDictionary IconGI505553@node0 
+updateDictionary IconGI505550@node0 
+updateDictionary TYDOM360568@node0 
 }
 
 addGroup sync:NanoRestGroup
