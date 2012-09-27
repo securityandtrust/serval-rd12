@@ -19,6 +19,7 @@ import fr.gn.karotz.actions.TextToSpeachAction;
 import fr.gn.karotz.utils.Languages;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
@@ -36,17 +37,15 @@ import java.util.Properties;
 public class KarotzCmp  extends AbstractComponentType {
 
     private Karotz karotz;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KarotzCmp.class);
 
     @Port(name = "tts")
     public void onTtsRequest(Object o) {
 
-        System.out.println("KarotzCmp::Received request for TTS");
         Properties p = (Properties)o;
 
-        System.out.println("KarotzCmp::Initializing session for TTS");
+        logger.info("Initializing session for TTS, saying "+ (String)p.get("message"));
         if(karotz.initSession()) {
-            System.out.println("KarotzCmp::Saying: " + (String)p.get("message"));
-
             karotz.send(new TextToSpeachAction((String)p.get("message"), Languages.EN));
             try {
                 Thread.sleep((((String) p.get("message")).length() * 100) + 1000);
@@ -56,7 +55,7 @@ public class KarotzCmp  extends AbstractComponentType {
             karotz.closeSession();
 
         } else {
-            System.err.println("KarotzCmp::Couldn't init the session.");
+            logger.warn("Couldn't init the session.");
         }
 
     }

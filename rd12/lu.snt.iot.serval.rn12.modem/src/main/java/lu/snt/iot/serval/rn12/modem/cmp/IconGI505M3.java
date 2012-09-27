@@ -4,19 +4,15 @@
  */
 package lu.snt.iot.serval.rn12.modem.cmp;
 
+import lu.snt.iot.serval.rn12.modem.lst.SerialEvtListener;
 import org.kevoree.annotation.*;
 import org.kevoree.extra.kserial.SerialPort.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Library(name = "Serval_RN12")
 @DictionaryType({
@@ -34,140 +30,117 @@ import java.util.logging.Logger;
 @ComponentType
 public class IconGI505M3 extends AbstractComponentType implements SerialPortEventListener {
 
-    static final Logger logger = Logger.getLogger(IconGI505M3.class.getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IconGI505M3.class);
+    private SerialEvtListener listener = new SerialEvtListener();
     private String pin = "0000";
+    private long latency = 200;
     //private String phoneNum;
     private String serialPortName = "/dev/ttyHS2";
 
 
-    private LinkedBlockingQueue<Byte> queue = new LinkedBlockingQueue<Byte>();
+    private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
 
     public IconGI505M3() {
     }
 
     private String readLine() {
 
-        StringBuffer buf = new StringBuffer("");
-
         try {
-            do {
-                int lu = queue.take().intValue();
-                buf.append((char) lu);
-            } while (!queue.isEmpty());
-
+            //String taken = queue.take();
+            return queue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return buf.toString();
+        return null;
     }
 
 
 
     @Ports({@Port(name="sendWithAck"),@Port(name="send")})
     public boolean sendSMS(Object msg) {
+        /*
+        * Nominal sequence
+        *
+        * AT+CPIN=<codepin>
+        * OK
+        * AT+CMGF=1
+        * OK
+        * AT+CMGS="<numDeTel>"
+        * >ligne1
+        * >ligne n<ctrl+Z>
+        *
+        * +CMGI <num>
+        *
+        * OK
+        */
 
-        SerialPort serial;
 
         final Hashtable<String,Object> p = (Hashtable<String,Object>)msg;
         final int textId = (Integer)p.get("text.id");
         String message = (String)p.get("text."+textId+".content");
         String phoneNum = (String)p.get("ecl."+textId+".number");
 
+        logger.debug("Starting sending \"" + message + " to " + phoneNum);
+
         try {
 
-            System.out.println("IconGI505::Getting ComPortIdentifier for " + serialPortName );
-            serial = new SerialPort(serialPortName, 19200);
-            System.out.println("IconGI505::Got ComPortIdentifier for " + serialPortName );
-            serial.addEventListener(this);
-            System.out.println("IconGI505::Listener Registered");
-            serial.open();
-            System.out.println("IconGI505::Connection Opened");
+            SerialPort serial = initializeSerialConnection();
 
-            /*
-             * Nominal sequence
-             *
-             * AT+CPIN=<codepin>
-             * OK
-             * AT+CMGF=1
-             * OK
-             * AT+CMGS="<numDeTel>"
-             * >ligne1
-             * >ligne n<ctrl+Z>
-             *
-             * +CMGI <num>
-             *
-             * OK
-             */
-
-            serial.write("ATE0\r\n".getBytes());
-            logger.log(Level.INFO, "Sent:" + "ATE0");
-
-            Thread.sleep(50);
-            StringBuffer answer = new StringBuffer();
-            answer.append(readLine());
-            if(!answer.toString().contains("OK")){
-                answer.append(readLine());
-            }
-            logger.log(Level.INFO, "Answered:" + answer.toString());
-
-            serial.write("AT+CPIN?\r\n".getBytes());
-            logger.log(Level.INFO, "Sent:" + "AT+CPIN?\r\n");
-
-            answer.append(readLine());
-            logger.log(Level.INFO, "Answered:" + answer.toString());
-
-            if (answer.toString().contains("+CPIN: SIM PIN")) {
-                serial.write(("AT+CPIN=\"" + pin + "\"\r\n").getBytes());
-                Thread.sleep(50);
-                answer = new StringBuffer();
-                do {
-                    answer.append(readLine());
-                } while (!answer.toString().contains("OK"));
-                logger.log(Level.INFO, "Answered:" + answer.toString());
-            }
-
-            serial.write("AT+CMGF=1\r\n".getBytes());
-            Thread.sleep(50);
-            answer = new StringBuffer();
-            do {
-                answer.append(readLine());
-            } while (!answer.toString().contains("OK"));
-            logger.log(Level.INFO, "Answered:" + answer.toString());
-
-            serial.write(("AT+CMGS=\"" + phoneNum + "\"" + (char) 13).getBytes());
-            Thread.sleep(50);
-            answer = new StringBuffer();
-            do {
-                answer.append(readLine());
-            } while (!answer.toString().contains(">") && !answer.toString().contains("+CMS ERROR"));
-            logger.log(Level.INFO, "Answered:" + answer.toString());
-
-            if (!answer.toString().contains("+CMS ERROR")) {
-
-                serial.write((message + (char) 26).getBytes());
-                answer = new StringBuffer();
-                do {
-                    answer.append(readLine());
-                } while (!answer.toString().contains("+CMGS:"));
-                logger.log(Level.INFO, "Answered:" + answer.toString());
-
-                if (!answer.toString().substring(answer.toString().indexOf("+CMGS:")).contains("OK")) {
-                    answer = new StringBuffer();
-                    do {
-                        answer.append(readLine());
-                    } while (!answer.toString().contains("OK"));
-                    logger.log(Level.INFO, "Answered:" + answer.toString());
+            if(checkPin(serial)) {
+                logger.debug("Checking registration");
+                while(!checkRegistration(serial)) {
+                    logger.debug("Not registered. Sleep.");
+                    Thread.sleep(3000);
                 }
-                logger.info("Message sent.");
-            } else {
-                logger.log(Level.SEVERE, "SMS:: Error while sending.");
-            }
+                logger.debug("Registered");
 
+                serial.write("AT+CMGF=1\r\n".getBytes());
+                Thread.sleep(latency);
+                logger.debug("Echo:" + readLine());
+                Thread.sleep(latency);
+                String answer = readLine();
+                logger.debug("Answer:" + answer);
+                if(answer.contains("OK")) {
+
+                    //Set phone number
+                    boolean errorOccured;
+                    do {
+                        errorOccured = false;
+                        serial.write(("AT+CMGS=\"" + phoneNum + "\"\r\n").getBytes());
+                        Thread.sleep(latency);
+                        logger.debug("Echo:" + readLine());
+
+                        while(!queue.isEmpty()) {
+                            errorOccured = true;
+                            Thread.sleep(latency);
+                            answer = readLine();
+                            logger.debug("Answer:" + answer);
+                        }
+                        Thread.sleep(1000);
+                    }while(errorOccured);
+
+                    serial.write((message + (char) 26).getBytes());
+                    Thread.sleep(latency);
+
+
+                    answer = readLine();
+                    logger.debug("AnswerA:" + answer);
+                    Thread.sleep(latency);
+                    answer = readLine();
+                    logger.debug("AnswerB:" + answer);
+                    Thread.sleep(latency);
+                    answer = readLine();
+                    logger.debug("AnswerC:" + answer);
+
+                } else {
+                    logger.warn("AT+CMGF command answered: " + answer + ". Message sending process aborted.");
+                }
+            } else {
+                logger.error("IconGI505::Modem not ready. CheckPin returned false.");
+            }
             serial.close();
 
         } catch (SerialPortException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -175,62 +148,135 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
         return true;
     }
 
+    private boolean checkPin(SerialPort serial) {
+        try {
+            serial.write("AT+CPIN?\r\n".getBytes());
+            Thread.sleep(latency);
+            logger.debug("Echo:" + readLine());
+
+            // SIM PIN required or CPIN READY
+            String answer = readLine();
+            logger.debug("Answer:" + answer);
+            if(answer.contains("+CPIN: SIM PIN")) {
+
+                //SIM PIN followed by a OK.
+                answer = readLine();
+                logger.debug("Answer:" + answer);
+
+                //Send PIN
+                serial.write(("AT+CPIN=\"" + pin + "\"\r\n").getBytes());
+                Thread.sleep(latency);
+                logger.debug("Echo:" + readLine());
+
+                //CPIN followed by a OK.
+                answer = readLine();
+                logger.debug("Answer:" + answer);
+            } else if (answer.contains("READY")) {
+
+                //CPIN: READY followed by a OK.
+                answer = readLine();
+                logger.debug("Answer:" + answer);
+            } else {
+                logger.warn("Unkown answer:" + answer);
+                return false;
+            }
+
+            //waiting for Network registration
+            //checkRegistration(serial);
+
+            return true;
+
+
+        } catch (SerialPortException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return false;
+    }
+
+
+    private boolean checkRegistration(SerialPort serial) {
+        try {
+            serial.write("AT+CGREG?\r\n".getBytes());
+
+            Thread.sleep(latency);
+            logger.debug("Echo:" + readLine());
+
+            String answer = readLine();
+            logger.debug("Answer:" + answer);
+            int comaPosition = answer.indexOf(",");
+            String status = answer.substring(comaPosition+1, comaPosition+2);
+
+            //+CGREG followed by a OK.
+            answer = readLine();
+            logger.debug("Answer:" + answer);
+
+            return (status.equals("1")||status.equals("5"));
+
+        } catch (SerialPortException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return false;
+    }
+
+
+    private SerialPort initializeSerialConnection() {
+        SerialPort serial = null;
+        try {
+            logger.debug("Getting ComPortIdentifier for " + serialPortName);
+            serial = new SerialPort(serialPortName, 19200);
+            logger.debug("Got ComPortIdentifier for " + serialPortName);
+            serial.addEventListener(this);
+            logger.debug("Listener Registered");
+            serial.open();
+            Thread.sleep(200);
+            logger.info("Connection Opened with " + serialPortName);
+        }catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return serial;
+    }
+
+    private void setEcho(SerialPort serial, boolean on) {
+        try {
+            serial.write(("ATE" + (on ? "1" : "0") + "\r\n").getBytes());
+            if(!on) {
+                logger.debug("Echo:" + readLine());
+            }
+            logger.debug("Answer:" + readLine());
+        } catch (SerialPortException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
     @Start
     public void start() {
         update();
 
-        System.out.println("IconGI505::Starting");
-
-        final SerialPort serial;
+        logger.info("Starting");
         try {
 
-            System.out.println("IconGI505::Getting ComPortIdentifier for " + serialPortName);
-            serial = new SerialPort(serialPortName, 19200);
-            System.out.println("IconGI505::Got ComPortIdentifier for " + serialPortName );
-            serial.addEventListener(this);
-            System.out.println("IconGI505::Listener Registered");
-            serial.open();
-            System.out.println("IconGI505::Connection Opened");
+            final SerialPort serial = initializeSerialConnection();
+
+            //setEcho(serial,false);
+
+            checkPin(serial);
 
             /*
-            serial.write("ATE0\r\n".getBytes());
-            logger.log(Level.INFO, "Sent:" + "ATE0");
-
             StringBuffer answer = new StringBuffer();
-            answer.append(readLine());
-            if(!answer.toString().contains("OK")){
-                answer.append(readLine());
-            }
-            logger.log(Level.INFO, "Answered:" + answer.toString());
-            */
-
-            serial.write("AT+CPIN?\r\n".getBytes());
-            StringBuffer answer = new StringBuffer();
-            do{
-                answer.append(readLine());
-                System.out.println("IconGI505::" + answer);
-            } while(!answer.toString().contains("+CPIN: SIM PIN") && !answer.toString().contains("OK"));
-
-            if (answer.toString().contains("+CPIN: SIM PIN")) {
-                serial.write(("AT+CPIN=\"" + pin + "\"\r\n").getBytes());
-                answer = new StringBuffer();
-                do {
-                    answer.append(readLine());
-                    System.out.println("IconGI505::" + answer);
-                } while (!answer.toString().contains("OK"));
-            }
-
             serial.write("AT+CMGF=1\r\n".getBytes());
             answer = new StringBuffer();
             do {
                 answer.append(readLine());
-                System.out.println("IconGI505::" + answer);
+                logger.debug(answer.toString());
             } while (!answer.toString().contains("OK"));
-
-            System.out.println("IconGI505::Modem ready");
+            */
 
             serial.close();
-
+            logger.info("Modem ready");
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -245,7 +291,7 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
         if ((o = getDictionary().get("pincode")) != null) {
             pin = o.toString();
             if (pin.length() != 4) {
-                logger.log(Level.SEVERE, "Pin code does seem to be correct");
+                logger.error("Pin code does seem to be correct");
             }
         }
         /*
@@ -258,16 +304,23 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
         }
     }
 
-    public void processSend(Object input) {
-        sendSMS(input.toString());
-    }
-
     @Override
-    public void incomingDataEvent(SerialPortEvent serialPortEvent) {
-        byte[] buffer = serialPortEvent.read();
-        for(byte b : buffer) {
-            queue.add(b);
+    public synchronized void incomingDataEvent(SerialPortEvent serialPortEvent) {
+        final String received = new String(serialPortEvent.read());
+        String[] split = received.split("\r");
+        //for(int i = split.length-1; i>-1;i--) {
+        //  String messagePart = split[i];
+        for(String messagePart : split) {
+
+            if(messagePart != null && messagePart.length()>0 && !messagePart.equals("\r")){
+                queue.add(messagePart);
+                logger.debug("MessageQueued:" + messagePart);
+            } else {
+                logger.debug("MessageIgnored:" + Arrays.toString(messagePart.getBytes()));
+            }
         }
+
+
     }
 
     @Override
@@ -279,4 +332,5 @@ public class IconGI505M3 extends AbstractComponentType implements SerialPortEven
     public void concurrentOpenEvent(SerialConcurrentOpenEvent serialConcurrentOpenEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
 }

@@ -21,6 +21,7 @@
 
     <properties>
         <kevoree.version>1.8.7</kevoree.version>
+        <slf4j.version>1.6.4</slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- EXAMPLE FOR MYSQL -->
         <sonar.jdbc.url>
@@ -46,6 +47,17 @@
             <groupId>org.kevoree.tools</groupId>
             <artifactId>org.kevoree.tools.annotation.api</artifactId>
             <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

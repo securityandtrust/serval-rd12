@@ -1,4 +1,5 @@
-import lu.snt.iot.serval.rn12.modem.cmp.IconGI505M;
+
+import lu.snt.iot.serval.rn12.modem.cmp.IconGI505M3;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -6,7 +7,7 @@ import java.util.Hashtable;
 public class IconGI505MTest {
 
     public static void main(String[] args) {
-        IconGI505M modem = new IconGI505M();
+        IconGI505M3 modem = new IconGI505M3();
 
         HashMap<String, Object> dico = new HashMap<String, Object>();
 
@@ -16,6 +17,12 @@ public class IconGI505MTest {
         modem.setDictionary(dico);
 
         modem.start();
+
+        try {
+            Thread.sleep(5*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         final Hashtable<String,Object> p = new Hashtable<String,Object>();
         p.put("text.id", Integer.valueOf(0));
