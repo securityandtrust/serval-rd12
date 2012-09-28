@@ -2,8 +2,10 @@ package lu.snt.iot.serval.rn12.hcs.cmp;
 
 import org.kevoree.annotation.*;
 import org.kevoree.api.service.core.script.KevScriptEngine;
+import org.kevoree.api.service.core.script.KevScriptEngineException;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.io.File;
@@ -34,6 +36,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     private Map<String, Object> ongoingAlert;
     private List<Map<String, Object>> pastAlerts;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HomeCareSystem.class);
 
     public HomeCareSystem() {
         ongoingAlert = new Hashtable<String, Object>();
@@ -48,7 +51,9 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     public void onDoorSensorActivated(Object o) {
         ongoingAlert.put("time.event.end", System.currentTimeMillis());
         store(ongoingAlert);
+        deployProxy(false);
         ongoingAlert = null;
+
     }
 
     @Port(name="needHelp")
@@ -73,10 +78,27 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         ((MessagePort)getPortByName("eclProvider")).process(alert);
     }
 
-    private void deployProxy() {
+    private void deployProxy(boolean activate) {
         KevScriptEngine engine = getKevScriptEngineFactory().createKevScriptEngine();
-        engine.append("merge \"mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/{kevoree.version}\"");
-        engine.append("addComponent input@node0 : NodeJSProxy { ip=\"192.168.1.217\",port=\"8667\",remotePort=\"80\" }");
+        if(activate) {
+            engine.append("merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.7'");
+            engine.append("addComponent input@node0 : NodeJSProxy { ip='192.168.1.217',port='8868',remotePort='80' }");
+            try {
+                engine.interpretDeploy();
+                logger.info("VideoProxy deployed.");
+            } catch (KevScriptEngineException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        } else {
+            engine.append("removeComponent input@node0");
+            try {
+                engine.interpretDeploy();
+                logger.info("VideoProxy deployed.");
+            } catch (KevScriptEngineException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
     }
 
     @Port(name="textReceived")
@@ -89,9 +111,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
             System.out.println("HCS::MessageReceived: msg->" + (String)alert.get("text." + textId + ".response"));
             if(!alert.containsKey("ecl.accepted")) {
 
-                deployProxy();
-
-
+                deployProxy(true);
 
                 if(((String)alert.get("text." + textId + ".response")).toLowerCase().contains("yes")) {
 
@@ -101,7 +121,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
                     if(alert.containsKey("text."+textId+".xmpp")) {
                         alert.put("text."+newTextId+".xmpp",alert.get("text."+textId+".xmpp"));
                     }
-                    alert.put("text."+newTextId+".content", "The code to get in is: C0369X. You can also see what is happening on http://urls.fr/help");
+                    alert.put("text."+newTextId+".content", "The code to get in is: C0369X. You can also see what is happening on http://goo.gl/fusdr");
                     alert.put("ecl.accepted",textId);
                     ((MessagePort)getPortByName("extCom")).process(alert);
 
