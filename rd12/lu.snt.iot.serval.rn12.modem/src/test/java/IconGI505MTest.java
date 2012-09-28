@@ -18,21 +18,16 @@ public class IconGI505MTest {
 
         modem.start();
 
-        try {
-            Thread.sleep(5*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
         final Hashtable<String,Object> p = new Hashtable<String,Object>();
         p.put("text.id", Integer.valueOf(0));
         p.put("text.0.content", "TesMessage");
-        p.put("ecl.0.number","621159813");
+        p.put("ecl.0.number","+352621159813");
 
         modem.sendSMS(p);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3 * 60 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
