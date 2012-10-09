@@ -4,6 +4,7 @@
 package fr.gn.karotz.msg;
 
 import fr.gn.karotz.utils.DocumentHelper;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 public abstract class ServerAnswer {
 
     protected String messageId;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ServerAnswer.class);
 
     public String getMessageId() {
         return messageId;
@@ -54,7 +56,7 @@ public abstract class ServerAnswer {
                 } else if(doc.getElementsByTagName("callback").getLength() != 0) {
                     return CallbackMessage.parse(doc);
                 } else {
-                    System.out.println("ServerAnswer:parse -> Unknown message kind: " + DocumentHelper.convertToString(doc));
+                    logger.error("ServerAnswer:parse -> Unknown message kind: " + DocumentHelper.convertToString(doc));
                 }
 
 
@@ -64,7 +66,7 @@ public abstract class ServerAnswer {
                 if (messageItemCount != 0) {
                     return ConfigurationMessage.parse(doc);
                 } else {
-                    System.out.println("ServerAnswer:parse -> VoosMsg not found in answer: " + DocumentHelper.convertToString(doc));
+                    logger.error("ServerAnswer:parse -> VoosMsg not found in answer: " + DocumentHelper.convertToString(doc));
                 }
             }
         } catch (ParserConfigurationException ex) {

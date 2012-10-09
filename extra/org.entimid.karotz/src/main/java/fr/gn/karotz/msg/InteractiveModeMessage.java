@@ -5,6 +5,7 @@ package fr.gn.karotz.msg;
 
 import fr.gn.karotz.session.InteractiveAction;
 import fr.gn.karotz.utils.DocumentHelper;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -16,7 +17,7 @@ import org.w3c.dom.Document;
 public class InteractiveModeMessage extends ServerAnswer {
 
     private InteractiveAction action;
-
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(InteractiveModeMessage.class);
 
     private InteractiveModeMessage(String id) {
         super(id);
@@ -45,7 +46,7 @@ public class InteractiveModeMessage extends ServerAnswer {
         if (message.getElementsByTagName("interactiveId").getLength() == 1) {
             msg.interactiveId = message.getElementsByTagName("interactiveId").item(0).getFirstChild().getNodeValue();
         } else {
-            System.out.println("InteractiveModeMessage:parse -> InteractiveId number of nodes incorrectr in " + DocumentHelper.convertToString(message));
+            logger.error("InteractiveModeMessage:parse -> InteractiveId number of nodes incorrect in " + DocumentHelper.convertToString(message));
         }
 
         return msg;

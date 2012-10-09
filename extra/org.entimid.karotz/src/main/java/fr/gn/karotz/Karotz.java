@@ -10,6 +10,7 @@ import fr.gn.karotz.session.InteractiveAction;
 import fr.gn.karotz.session.InteractiveCommand;
 import fr.gn.karotz.utils.KarotzCommand;
 import fr.gn.karotz.utils.KarotzSigner;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Mac;
@@ -34,6 +35,8 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Karotz implements KarotzSigner {
 
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Karotz.class);
 
     public Karotz(String apiKey, String secretKey, String installId) {
         Kernel.setApiKey(apiKey);
@@ -86,24 +89,24 @@ public class Karotz implements KarotzSigner {
     public ServerAnswer send(KarotzCommand command) {
         try {
 
-            System.out.println("Sending request: " + command.getCommand());
+            logger.debug("Sending request: " + command.getCommand());
             URL serverInteractiveIdQuery = new URL(command.getCommand());
 
             HttpURLConnection connection = (HttpURLConnection) serverInteractiveIdQuery.openConnection();
 
             BufferedReader br;
             if (connection.getResponseCode() >= 500) {
-                System.out.println("Error code returned: " + connection.getResponseCode());
+                logger.warn("Error code returned: " + connection.getResponseCode());
                 br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 
                 String line;
                 while ((line = br.readLine()) != null) {
-                    System.err.println(line);
+                    logger.error(line);
                 }
 
             } else {
                 ServerAnswer answer = ServerAnswer.parse(connection.getInputStream());
-                System.out.println("\nServerAnswer: " + answer.toString() + "\n==============================\n");
+                logger.debug("\nServerAnswer: " + answer.toString() + "\n==============================\n");
 
                 return answer;
             }

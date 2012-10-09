@@ -5,6 +5,7 @@ package fr.gn.karotz.msg;
 
 
 import fr.gn.karotz.utils.DocumentHelper;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,6 +24,7 @@ public class ResponseMessage extends ServerAnswer {
     private String interactiveId;
     private ResponseCode code;
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ResponseMessage.class);
 
     protected ResponseMessage(String id) {
         super(id);
@@ -37,14 +39,14 @@ public class ResponseMessage extends ServerAnswer {
         if(message.getElementsByTagName("interactiveId").getLength() == 1) {
             msg.interactiveId = message.getElementsByTagName("interactiveId").item(0).getFirstChild().getNodeValue();
         } else {
-            System.out.println("ResponseMessage:parse -> InteractiveId number of nodes incorrectr in " + DocumentHelper.convertToString(message));
+            logger.error("ResponseMessage:parse -> InteractiveId number of nodes incorrect in " + DocumentHelper.convertToString(message));
         }
 
         //Get InteractiveId
         if(message.getElementsByTagName("correlationId").getLength() == 1) {
             msg.correlationId = message.getElementsByTagName("correlationId").item(0).getFirstChild().getNodeValue();
         } else {
-            System.out.println("ResponseMessage:parse -> correlationId number of nodes incorrectr in " + DocumentHelper.convertToString(message));
+            logger.error("ResponseMessage:parse -> correlationId number of nodes incorrect in " + DocumentHelper.convertToString(message));
         }
 
         //check response Node
@@ -57,7 +59,7 @@ public class ResponseMessage extends ServerAnswer {
                     responseNode.getElementsByTagName("code").item(0).getFirstChild().getNodeValue());
 
         } else {
-            System.out.println("ResponseMessage:parse -> 'response' number of nodes incorrectr in " + DocumentHelper.convertToString(message));
+            logger.error("ResponseMessage:parse -> 'response' number of nodes incorrect in " + DocumentHelper.convertToString(message));
         }
 
         return msg;

@@ -4,6 +4,8 @@
 
 package fr.gn.karotz.session;
 
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -24,6 +26,7 @@ public class PictureReceiver extends Thread implements Runnable {
 
     private int port;
     private File lastDownloaded;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PictureReceiver.class);
 
 
     public PictureReceiver(int port) {
@@ -34,7 +37,7 @@ public class PictureReceiver extends Thread implements Runnable {
 
         try {
             ServerSocket Server = new ServerSocket(port);
-            System.out.println("PictureReceiver ready on port " + port + " at " + InetAddress.getLocalHost().getHostAddress());
+            logger.debug("PictureReceiver ready on port " + port + " at " + InetAddress.getLocalHost().getHostAddress());
 
             Socket connected = Server.accept();
             InputStream is = connected.getInputStream();
