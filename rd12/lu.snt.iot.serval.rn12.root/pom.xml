@@ -13,6 +13,7 @@
         <module>../lu.snt.iot.serval.rn12.modem</module>
         <module>../lu.snt.iot.serval.rn12.doorSensor</module>
         <module>../lu.snt.iot.serval.rn12.karotz</module>
+        <module>../lu.snt.iot.serval.rn12.framework</module>
     </modules>
     <packaging>pom</packaging>
 

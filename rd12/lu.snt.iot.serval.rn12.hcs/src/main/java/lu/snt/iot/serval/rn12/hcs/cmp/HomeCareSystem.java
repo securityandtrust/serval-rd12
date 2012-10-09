@@ -49,15 +49,21 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Port(name="doorSensor")
     public void onDoorSensorActivated(Object o) {
-        ongoingAlert.put("time.event.end", System.currentTimeMillis());
-        store(ongoingAlert);
-        deployProxy(false);
-        ongoingAlert = null;
+        if(ongoingAlert != null) {
+            ongoingAlert.put("time.event.end", System.currentTimeMillis());
 
+            store(ongoingAlert);
+            deployProxy(false);
+            ongoingAlert = null;
+            logger.info("End of Alert.");
+        } else {
+            logger.debug("Door sensor port activated with no ongoing alert.");
+        }
     }
 
     @Port(name="needHelp")
     public void onHelpRequestReceived(Object o) {
+        logger.info("Beginning of ALERT : " + System.currentTimeMillis());
 
         //build an alert entry
         Map<String, Object> alert =  new Hashtable<String, Object>();
@@ -74,7 +80,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         }
 
         //look for the emergency call list
-        System.out.println("HCS::FallDetection::Hashtable:" + alert.toString() + " size:" + alert.size());
+        logger.debug("HCS::FallDetection::Hashtable:" + alert.toString() + " size:" + alert.size());
         ((MessagePort)getPortByName("eclProvider")).process(alert);
     }
 
@@ -82,7 +88,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         KevScriptEngine engine = getKevScriptEngineFactory().createKevScriptEngine();
         if(activate) {
             engine.append("merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.7'");
-            engine.append("addComponent input@node0 : NodeJSProxy { ip='192.168.1.217',port='8868',remotePort='80' }");
+            engine.append("addComponent input@node0 : NodeJSProxy { ip='192.168.1.216',port='8868',remotePort='80' }");
             try {
                 engine.interpretDeploy();
                 logger.info("VideoProxy deployed.");
@@ -93,7 +99,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
             engine.append("removeComponent input@node0");
             try {
                 engine.interpretDeploy();
-                logger.info("VideoProxy deployed.");
+                logger.info("VideoProxy removed.");
             } catch (KevScriptEngineException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
@@ -108,12 +114,12 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         if(alert.containsKey("text.id")) {
             int textId = (Integer)alert.get("text.id");
             int newTextId = textId+1;
-            System.out.println("HCS::MessageReceived: msg->" + (String)alert.get("text." + textId + ".response"));
+            logger.debug("HCS::MessageReceived: msg->" + (String)alert.get("text." + textId + ".response"));
             if(!alert.containsKey("ecl.accepted")) {
 
-                deployProxy(true);
-
                 if(((String)alert.get("text." + textId + ".response")).toLowerCase().contains("yes")) {
+
+                    deployProxy(true);
 
                     alert.put("text.id",newTextId);
                     alert.put("text."+newTextId+".name",alert.get("text." + textId + ".name"));
@@ -152,7 +158,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
                 } else {
 
-                    JOptionPane.showMessageDialog(null, "Cannot get information from the answer. Trying next contact.", "Warning" ,JOptionPane.WARNING_MESSAGE);
+                    //JOptionPane.showMessageDialog(null, "Cannot get information from the answer. Trying next contact.", "Warning" ,JOptionPane.WARNING_MESSAGE);
                     Map<String, String> ecl = (Hashtable<String, String>) alert.get("ecl");
                     //send a message to the first contact
                     alert.put("text.id",newTextId);
@@ -173,7 +179,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     public void onEclReceived(Object o) {
         //Receipt of the emergency call list
         Map<String, Object> alert =  (Map<String, Object>)o;
-        System.out.println("HCS::EclReceived::Hashtable:" + alert.toString() + " size:" + alert.size());
+        logger.debug("HCS::EclReceived::Hashtable:" + alert.toString() + " size:" + alert.size());
         //send a message to the first contact
         alert.put("text.id",0);
         alert.put("text.0.name",alert.get("ecl.0.name"));

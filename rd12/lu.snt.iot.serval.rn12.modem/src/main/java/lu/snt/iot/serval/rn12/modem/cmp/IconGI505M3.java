@@ -54,11 +54,11 @@ public class IconGI505M3 extends AbstractComponentType {
     @Ports({@Port(name="sendWithAck"),@Port(name="send")})
     public void sendSMS(Object msg) {
 
-        final Hashtable<String,Object> p = (Hashtable<String,Object>)msg;
+        final Hashtable<String,Object> alert = (Hashtable<String,Object>)msg;
 
-        final int textId = (Integer)p.get("text.id");
-        String message = (String)p.get("text."+textId+".content");
-        String phoneNum = (String)p.get("ecl."+textId+".number");
+        final int textId = (Integer)alert.get("text.id");
+        String message = (String)alert.get("text."+textId+".content");
+        String phoneNum = (String)alert.get("ecl."+textId+".number");
 
         Kernel.getCommandManager().process(new CMGF());
 
@@ -67,8 +67,8 @@ public class IconGI505M3 extends AbstractComponentType {
         messageCommand.setPhoneNumber(phoneNum);
         Kernel.getCommandManager().process(messageCommand);
 
-        logger.debug("Store " + p + " at " + phoneNum);
-        messagesWaitingAck.put(phoneNum, p);
+        logger.debug("Store " + alert + " at " + phoneNum);
+        messagesWaitingAck.put(phoneNum, alert);
     }
 
     public void messageReceived(CMGR message) {

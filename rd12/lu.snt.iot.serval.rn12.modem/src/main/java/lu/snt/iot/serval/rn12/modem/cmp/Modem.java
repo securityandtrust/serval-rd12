@@ -7,6 +7,7 @@ import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.library.xmpp.mngr.ConnectionManager;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.Hashtable;
@@ -30,6 +31,8 @@ public class Modem extends AbstractComponentType {
     //private FakeConsole console;
     private ConnectionManager connection;
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Modem.class);
+
     public Modem() {
 
     }
@@ -39,9 +42,13 @@ public class Modem extends AbstractComponentType {
         final Hashtable<String, Object> alert = (Hashtable<String,Object>)msg;
         final int textId = (Integer)alert.get("text.id");
 
+        logger.debug("Sending message: " + (String)alert.get("text."+textId+".content") + " trough XMPP");
+
         if(alert.get("text."+textId+".xmpp") != null) {
+            logger.debug("Registering XMPP listener; sending message.");
             connection.sendMessage((String)alert.get("text."+textId+".content"),(String)alert.get("text."+textId+".xmpp"),new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
+                    logger.debug("XMPP message received !");
                     if (isPortBinded("msgReceived")) {
                         MessagePort answer = (MessagePort) getPortByName("msgReceived");
                         if(isPositive(message.getBody())) {
@@ -49,7 +56,10 @@ public class Modem extends AbstractComponentType {
                         } else {
                             alert.put("text."+textId+".response","No");
                         }
+                        logger.debug("XMPP processing ALERT !");
                         answer.process(alert);
+                        chat.removeMessageListener(this);
+                        logger.debug("XMPP ALERT processed; Listener removed.");
                     }
                 }
             });
@@ -65,7 +75,7 @@ public class Modem extends AbstractComponentType {
     public void sendMessage(Object msg) {
         Hashtable<String, Object> alert = (Hashtable<String,Object>)msg;
         int textId = (Integer)alert.get("text.id");
-        JOptionPane.showMessageDialog(null, alert.get("text."+textId+".content"), "Message Received (to:" + alert.get("text."+textId+".number") + ")", JOptionPane.INFORMATION_MESSAGE);
+       // JOptionPane.showMessageDialog(null, alert.get("text."+textId+".content"), "Message Received (to:" + alert.get("text."+textId+".number") + ")", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Start
