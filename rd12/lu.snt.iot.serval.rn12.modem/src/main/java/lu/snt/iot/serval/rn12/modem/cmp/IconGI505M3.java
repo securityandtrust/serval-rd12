@@ -75,28 +75,28 @@ public class IconGI505M3 extends AbstractComponentType {
         logger.debug(message.getDatetime() + " from " + message.getPhoneNumber() + " said " + message.getContent());
         String num = message.getPhoneNumber().replace("\"","");
 
-        Hashtable<String,Object> p = null;
+        Hashtable<String,Object> alert = null;
 
         for(String key : messagesWaitingAck.keySet()) {
             if(message.getPhoneNumber().contains(key)) {
-                p = messagesWaitingAck.remove(key);
+                alert = messagesWaitingAck.remove(key);
                 break;
             }
         }
 
-        if(p!= null) {
-            logger.debug("Found " + p + " for " + num);
+        if(alert!= null) {
+            logger.debug("Found " + alert + " for " + num);
             MessagePort answer = (MessagePort) getPortByName("msgReceived");
             if(isPositive(message.getContent())) {
-                p.put("text."+(Integer)p.get("text.id")+".response","Yes");
+                alert.put("text."+(Integer)alert.get("text.id")+".response","Yes");
             } else {
-                p.put("text."+(Integer)p.get("text.id")+".response","No");
+                alert.put("text."+(Integer)alert.get("text.id")+".response","No");
             }
             if(isPortBinded("msgReceived")) {
-                answer.process(p);
+                answer.process(alert);
             } else {
                 logger.warn("Sms answer received, but port not binded.");
-                logger.warn(p.toString());
+                logger.warn(alert.toString());
             }
         } else {
             logger.warn("No message awaiting answer found for " + message.getPhoneNumber());
