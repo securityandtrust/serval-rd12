@@ -126,6 +126,6 @@ public class CMGR extends Command {
                         logger.warn("AT+CMGF command answered: " + answer + ". Message sending process aborted.");
                     }
                 } else {
-                    logger.error("IconGI505::Modem not ready. CheckPin returned false.");
+                    logger.error("IconGI505::XmppModem not ready. CheckPin returned false.");
                 }
                 serial.close();*/

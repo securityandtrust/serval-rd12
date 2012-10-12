@@ -49,7 +49,7 @@ public class CPIN extends Command {
             }
             case INITIALIZED:{
                 logger.debug("Answer:" + s);
-                if(s.contains("+CPIN: SIM PIN")) { //Modem waiting for a PIN
+                if(s.contains("+CPIN: SIM PIN")) { //XmppModem waiting for a PIN
                     status = Status.ANSWERED;
                     CPIN cmd2 = new CPIN();
                     cmd2.setPinCode(pinCode);

@@ -19,7 +19,7 @@ addNode node0:JavaSENode
   addComponent KarotzCmp103@node0 : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
   addComponent Emergency131@node0 : EmergencyCallList {}
   addComponent PersonalH306@node0 : PersonalHealthRecord {}
-  addComponent Modem17@node0 : Modem {login='entimid@gmail.com',password='entimidpass'}
+  addComponent Modem17@node0 : XmppModem {login='entimid@gmail.com',password='entimidpass'}
   addComponent IconGI505550@node0 : IconGI505M3 {serialPort='/dev/wmodem0',pincode='1828'}
   addComponent TYDOM360568@node0 : TYDOM360 {serialPortName='/dev/ttyACM0'}
 addChannel defMSG888 : defMSG {}
