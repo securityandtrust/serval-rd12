@@ -5,6 +5,7 @@ import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
+import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
@@ -210,6 +211,18 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Start
     public void start() {
+        
+        getModelService().registerModelListener(new ModelListenerAdapter() {
+            @Override
+            public void modelUpdated() {
+                Properties internalCom = new Properties();
+                internalCom.put("message","Hello. I just want to inform you, that the Home Care System is now ready to operate.");
+                if(isPortBinded("intCom")) {
+                    ((MessagePort)getPortByName("intCom")).process(internalCom);
+                }
+            }
+        });
+        
     }
 
     @Stop
