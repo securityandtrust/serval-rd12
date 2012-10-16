@@ -1,14 +1,18 @@
 package lu.snt.iot.serval.rn12.hcs.cmp;
 
+import lu.snt.iot.serval.rn12.framework.data.Alert;
+import lu.snt.iot.serval.rn12.framework.data.ecl.EmergencyCallList;
+import lu.snt.iot.serval.rn12.framework.data.ecl.EmergencyContact;
+import lu.snt.iot.serval.rn12.framework.data.id.IdentityRecord;
+import lu.snt.iot.serval.rn12.framework.data.msg.EmergencyMessage;
+import lu.snt.iot.serval.rn12.hcs.helpers.HcsHelper;
 import org.kevoree.annotation.*;
 import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
-import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,23 +39,22 @@ import java.util.*;
 @Library(name = "Serval_RN12")
 public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType {
 
-    private Map<String, Object> ongoingAlert;
-    private List<Map<String, Object>> pastAlerts;
+    private Alert ongoingAlert;
+    private List<Alert> pastAlerts;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HomeCareSystem.class);
 
     public HomeCareSystem() {
-        ongoingAlert = new Hashtable<String, Object>();
-        pastAlerts = new ArrayList<Map<String, Object>>();
+        pastAlerts = new ArrayList<Alert>();
     }
 
-    private void store(Map<String, Object> alert) {
+    private void store(Alert alert) {
         pastAlerts.add(alert);
     }
 
     @Port(name="doorSensor")
     public void onDoorSensorActivated(Object o) {
         if(ongoingAlert != null) {
-            ongoingAlert.put("time.event.end", System.currentTimeMillis());
+            ongoingAlert.closeAlert();
 
             store(ongoingAlert);
             deployProxy(false);
@@ -66,23 +69,18 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     public void onHelpRequestReceived(Object o) {
         logger.info("Beginning of ALERT : " + System.currentTimeMillis());
 
-        //build an alert entry
-        Map<String, Object> alert =  new Hashtable<String, Object>();
-        alert.put("time.event.start", System.currentTimeMillis());
-        alert.put("patient.name.last", "BECKER");
-        alert.put("patient.name.first", "Annette");
-        ongoingAlert = alert;
+        IdentityRecord identity = new IdentityRecord();
+        identity.setFirstName("Annette");
+        identity.setLastName("BECKER");
 
-        //Prepare a internal communication for the user
-        Properties internalCom = new Properties();
-        internalCom.put("message","Annette. I received your request for help. I am processing it.");
-        if(isPortBinded("intCom")) {
-            ((MessagePort)getPortByName("intCom")).process(internalCom);
-        }
+        //build an alert entry
+        ongoingAlert = new Alert(identity);
+
+        playOnIntercom("Annette. I received your request for help. I am processing it.");
 
         //look for the emergency call list
-        logger.debug("HCS::FallDetection::Hashtable:" + alert.toString() + " size:" + alert.size());
-        ((MessagePort)getPortByName("eclProvider")).process(alert);
+        logger.debug("Collecting ECL.");
+        ((MessagePort)getPortByName("eclProvider")).process(ongoingAlert.getIdentityRecord());
     }
 
     private void deployProxy(boolean activate) {
@@ -110,96 +108,76 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Port(name="textReceived")
     public void onMessageReceived(Object o) {
-        Map<String, Object> alert = (Map<String,Object>)o;
 
-        if(alert.containsKey("text.id")) {
-            int textId = (Integer)alert.get("text.id");
-            int newTextId = textId+1;
-            logger.debug("HCS::MessageReceived: msg->" + (String)alert.get("text." + textId + ".response"));
-            if(!alert.containsKey("ecl.accepted")) {
+        if(o instanceof EmergencyMessage) {
+            EmergencyMessage msg = (EmergencyMessage)o;
+            if(ongoingAlert != null) {
+                if(ongoingAlert.getEmergencyResponder() == null) {
 
-                if(((String)alert.get("text." + textId + ".response")).toLowerCase().contains("yes")) {
-
-                    deployProxy(true);
-
-                    alert.put("text.id",newTextId);
-                    alert.put("text."+newTextId+".name",alert.get("text." + textId + ".name"));
-                    alert.put("text."+newTextId+".number",alert.get("text."+textId+".number"));
-                    if(alert.containsKey("text."+textId+".xmpp")) {
-                        alert.put("text."+newTextId+".xmpp",alert.get("text."+textId+".xmpp"));
+                    if(HcsHelper.isAnswerPositive(msg)) {
+                        ongoingAlert.setEmergencyResponder(msg.getContact());
+                        deployProxy(true);
+                        sendAccessInformation(msg.getContact());
+                    } else {
+                        playOnIntercom(msg.getContact().getName()+ " can not come.");
+                        askNextContact();
                     }
-                    alert.put("text."+newTextId+".content", "The code to get in is: C0369X. You can also see what is happening on http://goo.gl/fusdr");
-                    alert.put("ecl.accepted",textId);
-                    ((MessagePort)getPortByName("extCom")).process(alert);
-
-                    Properties internalCom = new Properties();
-                    internalCom.put("message",alert.get("text." + textId + ".name") + " is on the way to come.");
-                    if(isPortBinded("intCom")) {
-                        ((MessagePort)getPortByName("intCom")).process(internalCom);
-                    }
-
-                } else if(((String)alert.get("text." + textId + ".response")).toLowerCase().contains("no")) {
-
-                    Map<String, String> ecl = (Hashtable<String, String>) alert.get("ecl");
-                    //send a message to the first contact
-                    alert.put("text.id",newTextId);
-                    alert.put("text."+newTextId+".name",alert.get("ecl." + newTextId +".name"));
-                    alert.put("text."+newTextId+".number",alert.get("ecl." + newTextId + ".number"));
-                    if(alert.containsKey("ecl."+newTextId+".xmpp")) {
-                        alert.put("text."+newTextId+".xmpp",alert.get("ecl."+newTextId+".xmpp"));
-                    }
-                    alert.put("text."+newTextId+".content", alert.get("patient.name.first") + " " + alert.get("patient.name.last") + " requires assistance. Can you go and check now ?");
-                    ((MessagePort)getPortByName("extCom")).process(alert);
-
-                    Properties internalCom = new Properties();
-                    internalCom.put("message",alert.get("text." + textId + ".name") + " can not come. I contact " + alert.get("ecl." + newTextId +".name"));
-                    if(isPortBinded("intCom")) {
-                        ((MessagePort)getPortByName("intCom")).process(internalCom);
-                    }
-
                 } else {
-
-                    //JOptionPane.showMessageDialog(null, "Cannot get information from the answer. Trying next contact.", "Warning" ,JOptionPane.WARNING_MESSAGE);
-                    Map<String, String> ecl = (Hashtable<String, String>) alert.get("ecl");
-                    //send a message to the first contact
-                    alert.put("text.id",newTextId);
-                    alert.put("text."+newTextId+".name",alert.get("ecl." + newTextId +".name"));
-                    alert.put("text."+newTextId+".number",alert.get("ecl." + newTextId + ".number"));
-                    if(alert.containsKey("ecl."+newTextId+".xmpp")) {
-                        alert.put("text."+newTextId+".xmpp",alert.get("ecl."+newTextId+".xmpp"));
-                    }
-                    alert.put("text."+newTextId+".content", alert.get("patient.name.first") + " " + alert.get("patient.name.last") + " requires assistance. Can you go and check now ?");
-                    ((MessagePort)getPortByName("extCom")).process(alert);
+                    playOnIntercom(msg.getContact().getName() + " just said, " + msg.getAnswer());
                 }
+            } else {
+                logger.warn("Received a message but no alert is ongoing." +  msg.getAnswer());
             }
-            ongoingAlert = alert;
+        } else {
+            logger.error("Received something but not of expected type. Class:"+o.getClass().getName());
         }
     }
 
+    private void sendAccessInformation(EmergencyContact contact) {
+        sendMessage(contact, "The code to get in is: C0369X. You can also see what is happening on http://goo.gl/fusdr");
+        playOnIntercom(contact.getName() + " is on the way to come.");
+    }
+
+
     @Port(name="ecl")
     public void onEclReceived(Object o) {
-        //Receipt of the emergency call list
-        Map<String, Object> alert =  (Map<String, Object>)o;
-        logger.debug("HCS::EclReceived::Hashtable:" + alert.toString() + " size:" + alert.size());
-        //send a message to the first contact
-        alert.put("text.id",0);
-        alert.put("text.0.name",alert.get("ecl.0.name"));
-        alert.put("text.0.number",alert.get("ecl.0.number"));
-        if(alert.containsKey("ecl.0.xmpp")) {
-            alert.put("text.0.xmpp",alert.get("ecl.0.xmpp"));
+
+        if(o instanceof EmergencyCallList) {
+            if(ongoingAlert != null) {
+                ongoingAlert.setEmergencyCallList((EmergencyCallList)o);
+                askNextContact();
+            } else {
+                logger.warn("Emergency call list received while no alert occurred.");
+            }
+        } else {
+            logger.error("Received an object with and unknown format. Class:" + o.getClass().getName(), new IllegalArgumentException());
         }
-        alert.put("text.0.content", alert.get("patient.name.first") + " " + alert.get("patient.name.last") + " requires assistance. Can you go and check now ?");
-        ((MessagePort)getPortByName("extCom")).process(alert);
-        ongoingAlert = alert;
+    }
 
-        //Prepare a internal communication for the user
-        Properties internalCom = new Properties();
-        internalCom.put("message","I try to contact " + alert.get("ecl.0.name"));
-        if(isPortBinded("intCom")) {
-            ((MessagePort)getPortByName("intCom")).process(internalCom);
+    private void askNextContact() {
+        String message = ongoingAlert.getIdentityRecord().getFirstName();
+        message += " " + ongoingAlert.getIdentityRecord().getLastName();
+        message += " requires assistance. Can you go and check now ?";
+        EmergencyContact contact = ongoingAlert.getEmergencyCallList().getNextContact(ongoingAlert);
+        playOnIntercom("I try to contact " + contact.getName());
+        sendMessage(contact,message);
+    }
+
+    private void sendMessage(EmergencyContact contact, String message) {
+        if(ongoingAlert != null) {
+            if(isPortBinded("extCom")) {
+
+                EmergencyMessage emergencyMessage = new EmergencyMessage(contact,message);
+                ongoingAlert.addCommunication(emergencyMessage);
+
+                ((MessagePort)getPortByName("extCom")).process(emergencyMessage);
+
+            } else {
+                logger.error("No external communication mean connected. Cannot send message.");
+            }
+        } else {
+            logger.error("AskNextContact called with no ongoing alert.");
         }
-
-
     }
 
 
@@ -211,18 +189,13 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Start
     public void start() {
-        
         getModelService().registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
-                Properties internalCom = new Properties();
-                internalCom.put("message","Hello. I just want to inform you, that the Home Care System is now ready to operate.");
-                if(isPortBinded("intCom")) {
-                    ((MessagePort)getPortByName("intCom")).process(internalCom);
-                }
+                playOnIntercom("Hello. I just want to inform you, that the Home Care System is now ready to operate.");
             }
         });
-        
+
     }
 
     @Stop
@@ -236,6 +209,14 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         start();
     }
 
+    private void playOnIntercom(String message) {
+        Properties internalCom = new Properties();
+        internalCom.put("message",message);
+        if(isPortBinded("intCom")) {
+            ((MessagePort)getPortByName("intCom")).process(internalCom);
+        }
+    }
+
 
     private void flushAlerts() {
 
@@ -243,21 +224,18 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
             PrintWriter pr = new PrintWriter(new FileOutputStream(new File("alertsFlush" + System.currentTimeMillis() + ".txt"),true));
             if(ongoingAlert != null) {
                 pr.println("##ONGOING");
-                for(Map.Entry e : ongoingAlert.entrySet()) {
-                    pr.println(e.getKey().toString() + "\t\t= " + e.getValue().toString());
-                }
+                pr.println(ongoingAlert.toString());
                 pr.println("##ONGOING_END");
                 pr.println();
             }
 
-            for(Map<String, Object> alert : pastAlerts) {
-                pr.println("##PAST_ALERT_" + alert.get("time.event.start"));
-                for(Map.Entry e : alert.entrySet()) {
-                    pr.println(e.getKey().toString() + "\t\t= " + e.getValue().toString());
-                }
-                pr.println("##PAST_ALERT_" + alert.get("time.event.start") + "_END");
+            pr.println("##PAST_ALERTS");
+            pr.println();
+            for(Alert alert : pastAlerts) {
+                pr.println(alert.toString());
                 pr.println();
             }
+            pr.println("##PAST_ALERTS");
 
             pr.flush();
             pr.close();

@@ -5,6 +5,7 @@
   <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
   <version>1.0.0-SNAPSHOT</version>
     <modules>
+        <module>../lu.snt.iot.serval.rn12.framework</module>
         <module>../lu.snt.iot.serval.rn12.ecl</module>
         <module>../lu.snt.iot.serval.rn12.bodySensors</module>
         <module>../lu.snt.iot.serval.rn12.phr</module>
@@ -13,7 +14,6 @@
         <module>../lu.snt.iot.serval.rn12.modem</module>
         <module>../lu.snt.iot.serval.rn12.doorSensor</module>
         <module>../lu.snt.iot.serval.rn12.karotz</module>
-        <module>../lu.snt.iot.serval.rn12.framework</module>
     </modules>
     <packaging>pom</packaging>
 

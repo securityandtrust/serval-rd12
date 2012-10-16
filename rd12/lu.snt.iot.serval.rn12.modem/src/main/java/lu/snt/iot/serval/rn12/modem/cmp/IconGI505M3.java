@@ -4,6 +4,7 @@
  */
 package lu.snt.iot.serval.rn12.modem.cmp;
 
+import lu.snt.iot.serval.rn12.framework.data.msg.EmergencyMessage;
 import lu.snt.iot.serval.rn12.modem.cmd.*;
 import lu.snt.iot.serval.rn12.modem.core.Kernel;
 import lu.snt.iot.serval.rn12.modem.utils.SerialConnectionManager;
@@ -40,7 +41,7 @@ public class IconGI505M3 extends AbstractComponentType {
     //private String phoneNum;
     private String serialPortName = "/dev/ttyHS2";
 
-    private Hashtable<String,Hashtable<String,Object>> messagesWaitingAck = new Hashtable<String,Hashtable<String, Object>>();
+    private Hashtable<String,EmergencyMessage> messagesWaitingAck = new Hashtable<String,EmergencyMessage>();
 
     public IconGI505M3() {
         Kernel.setComponent(this);
@@ -52,30 +53,36 @@ public class IconGI505M3 extends AbstractComponentType {
 
 
     @Ports({@Port(name="sendWithAck"),@Port(name="send")})
-    public void sendSMS(Object msg) {
+    public void sendSMS(Object o) {
 
-        final Hashtable<String,Object> alert = (Hashtable<String,Object>)msg;
 
-        final int textId = (Integer)alert.get("text.id");
-        String message = (String)alert.get("text."+textId+".content");
-        String phoneNum = (String)alert.get("ecl."+textId+".number");
+        if(o instanceof EmergencyMessage) {
+            EmergencyMessage msg = (EmergencyMessage)o;
+            if(msg.getContact().getPhoneNumber() != null) {
+                Kernel.getCommandManager().process(new CMGF());
 
-        Kernel.getCommandManager().process(new CMGF());
+                CMSG messageCommand = new CMSG();
+                messageCommand.setContent(msg.getMessage());
+                messageCommand.setPhoneNumber(msg.getContact().getPhoneNumber());
+                Kernel.getCommandManager().process(messageCommand);
 
-        CMSG messageCommand = new CMSG();
-        messageCommand.setContent(message);
-        messageCommand.setPhoneNumber(phoneNum);
-        Kernel.getCommandManager().process(messageCommand);
+                logger.debug("Store " + msg.toString() + " at " + msg.getContact().getPhoneNumber());
+                messagesWaitingAck.put(msg.getContact().getPhoneNumber(), msg);
+            } else {
+                logger.debug("No Phone number for this contact: " + msg.getContact().toString());
+            }
+        } else {
+            logger.error("Received an object to send, not instance of EmergencyMessage. Class" + o.getClass().getName());
+        }
 
-        logger.debug("Store " + alert + " at " + phoneNum);
-        messagesWaitingAck.put(phoneNum, alert);
+
     }
 
     public void messageReceived(CMGR message) {
         logger.debug(message.getDatetime() + " from " + message.getPhoneNumber() + " said " + message.getContent());
         String num = message.getPhoneNumber().replace("\"","");
 
-        Hashtable<String,Object> alert = null;
+        EmergencyMessage alert = null;
 
         for(String key : messagesWaitingAck.keySet()) {
             if(message.getPhoneNumber().contains(key)) {
@@ -87,11 +94,7 @@ public class IconGI505M3 extends AbstractComponentType {
         if(alert!= null) {
             logger.debug("Found " + alert + " for " + num);
             MessagePort answer = (MessagePort) getPortByName("msgReceived");
-            if(isPositive(message.getContent())) {
-                alert.put("text."+(Integer)alert.get("text.id")+".response","Yes");
-            } else {
-                alert.put("text."+(Integer)alert.get("text.id")+".response","No");
-            }
+            alert.setAnswer(message.getContent());
             if(isPortBinded("msgReceived")) {
                 answer.process(alert);
             } else {
@@ -103,14 +106,6 @@ public class IconGI505M3 extends AbstractComponentType {
         }
 
     }
-
-    private boolean isPositive(String sentense) {
-
-        sentense = sentense.toLowerCase();
-        return sentense.contains("yes") || sentense.contains("oui") || sentense.contains("ok");
-    }
-
-
 /*
     private void setEcho(SerialPort serial, boolean on) {
         try {

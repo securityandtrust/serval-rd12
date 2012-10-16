@@ -1,5 +1,6 @@
 package lu.snt.iot.serval.rn12.modem.cmp;
 
+import lu.snt.iot.serval.rn12.framework.data.msg.EmergencyMessage;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
@@ -31,64 +32,56 @@ public class XmppModem extends AbstractComponentType {
     private ConnectionManager connection;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(XmppModem.class);
-    private Hashtable<String,Hashtable<String,Object>> messagesWaitingAck = new Hashtable<String,Hashtable<String, Object>>();
+    private Hashtable<String,EmergencyMessage> messagesWaitingAck = new Hashtable<String,EmergencyMessage>();
 
     public XmppModem() {
 
     }
 
     @Port(name="sendWithAck")
-    public void sendMessageAck(Object msg) {
-        final Hashtable<String, Object> alert = (Hashtable<String,Object>)msg;
-        final int textId = (Integer)alert.get("text.id");
+    public void sendMessageAck(Object o) {
 
-        logger.debug("Sending message: " + (String)alert.get("text."+textId+".content") + " trough XMPP");
+        if(o instanceof EmergencyMessage) {
+            EmergencyMessage msg = (EmergencyMessage)o;
+            if(msg.getContact().getImAddr() != null) {
+                logger.debug("Registering XMPP listener; sending message.");
+                messagesWaitingAck.put(msg.getContact().getImAddr(), msg);
 
-        if(alert.get("text."+textId+".xmpp") != null) {
-            logger.debug("Registering XMPP listener; sending message.");
-            messagesWaitingAck.put((String)alert.get("text."+textId+".xmpp"), alert);
-            connection.sendMessage((String)alert.get("text."+textId+".content"),(String)alert.get("text."+textId+".xmpp"),new MessageListener() {
-                public void processMessage(Chat chat, Message message) {
-                    logger.debug("XMPP message received !");
-                    if (isPortBinded("msgReceived")) {
+                connection.sendMessage(msg.getMessage(),msg.getContact().getImAddr(),new MessageListener() {
+                    public void processMessage(Chat chat, Message message) {
+                        logger.debug("XMPP message received !");
+                        if (isPortBinded("msgReceived")) {
+                            logger.debug("New XMPP message from:" + message.getFrom());
+                            EmergencyMessage pendingMessage = null;
 
-                        logger.debug("New XMPP message from:" + message.getFrom());
-
-                        Hashtable<String,Object> alert = null;
-
-                        for(String key : messagesWaitingAck.keySet()) {
-                            if(message.getFrom().contains(key)) {
-                                alert = messagesWaitingAck.remove(key);
-                                break;
+                            for(String key : messagesWaitingAck.keySet()) {
+                                if(message.getFrom().contains(key)) {
+                                    pendingMessage = messagesWaitingAck.remove(key);
+                                    break;
+                                }
                             }
-                        }
 
-                        if(alert != null) {
+                            if(pendingMessage != null) {
 
-                            MessagePort answer = (MessagePort) getPortByName("msgReceived");
-                            if(isPositive(message.getBody())) {
-                                alert.put("text."+textId+".response","Yes");
+                                MessagePort answer = (MessagePort) getPortByName("msgReceived");
+                                pendingMessage.setAnswer(message.getBody());
+                                answer.process(pendingMessage);
+
+                                logger.debug("XMPP ALERT processed; Listener removed.");
+
                             } else {
-                                alert.put("text."+textId+".response","No");
+                                logger.debug("No pending alert. Message ignored");
                             }
-                            logger.debug("XMPP processing ALERT !");
-                            answer.process(alert);
-
-                            logger.debug("XMPP ALERT processed; Listener removed.");
-
-                        } else {
-                            logger.debug("No pending alert. Message ignored");
                         }
                     }
-                }
-            });
+                });
+            } else {
+                logger.debug("No IM address for this contact: " + msg.getContact().toString());
+            }
+        } else {
+            logger.error("Received an object to send, not instance of EmergencyMessage. Class" + o.getClass().getName());
         }
     }
-
-    private boolean isPositive(String sentense) {
-        return sentense.toLowerCase().contains("yes") || sentense.toLowerCase().contains("oui") || sentense.toLowerCase().contains("ok");
-    }
-
 
     @Port(name="send")
     public void sendMessage(Object msg) {
