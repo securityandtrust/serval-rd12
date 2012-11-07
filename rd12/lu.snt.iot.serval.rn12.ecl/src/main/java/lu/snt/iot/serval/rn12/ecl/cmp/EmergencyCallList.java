@@ -52,10 +52,6 @@ public class EmergencyCallList extends org.kevoree.framework.AbstractComponentTy
            ecl.addEmergencyContact(second);
 
 
-           EmergencyContact third = new EmergencyContact();
-           third.setName("Grégory");
-           third.setImAddr("sntlabphone01@entimid.org");
-           ecl.addEmergencyContact(third);
 
            /*
             alert.put("ecl.0.name", "Mike");
