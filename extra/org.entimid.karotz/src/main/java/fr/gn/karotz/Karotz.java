@@ -112,7 +112,7 @@ public class Karotz implements KarotzSigner {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return null;
