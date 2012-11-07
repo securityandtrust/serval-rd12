@@ -1,0 +1,112 @@
+body{
+font-family:Arial, Helvetica, sans-serif; 
+font-size:13px;
+width:1184;
+}
+.info, .success, .warning, .debug, .error, .validation {
+border: 1px solid;
+margin: 10px 0px;
+padding:15px 10px 15px 50px;
+background-repeat: no-repeat;
+background-position: 10px center;
+}
+.info {
+color: #00529B;
+background-color: #BDE5F8;
+background-image: url("../icon/knob/Knob Info.png");
+}
+.success {
+color: #4F8A10;
+background-color: #DFF2BF;
+background-image:url('../icon/knob/KnobValidGreen.png');
+}
+.warning {
+color: #9F6000;
+background-color: #FEEFB3;
+background-image: url('../icon/knob/KnobAttention.png');
+}
+
+.debug {
+color: #9F6000;
+background-color: #FEEFB3;
+background-image: url('../icon/knob/Knob Record On.png');
+}
+
+.error {
+color: #D8000C;
+background-color: #FFBABA;
+background-image: url('../icon/knob/KnobCancel.png');
+}
+
+.validation {
+color: #D63301;
+background-color: #FFCCBA;
+background-image: url('../icon/knob/Knob Validation.png');
+}
+
+
+
+
+
+div#top {
+	height:300px;
+	width:1184;
+	float:left;
+	background-color:#00CCFF;
+	}
+	
+div#center {
+	height:fill;
+	background-color:#FFCC00;
+}
+
+div#logos {
+	display:block;
+	float:left;
+}
+
+div#system {
+	float:left;
+	width:17%;
+	background-color:#0000CC;
+}
+
+
+td#connection_state, input {
+	color: #ffffff;
+	padding:5px 10px 6px 10px;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+	border:1px solid rgba(0,0,0,0.4);
+	-moz-border-radius: 5px;
+	-moz-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+}
+
+td#connection_state {
+	background-color: #ff004e;
+	font-size:24px;
+	font-family:courier;
+	font-weight:bold;
+}
+
+input[type=text] {
+	color: black;
+}
+
+input[type=submit] {
+	background-color: #00c0ff;
+	font-size:18px;
+	font-family:courier;
+	font-weight:bold;
+}
+
+div.slideshow {
+	padding: auto;
+ }
+
+
+
+
+
+
