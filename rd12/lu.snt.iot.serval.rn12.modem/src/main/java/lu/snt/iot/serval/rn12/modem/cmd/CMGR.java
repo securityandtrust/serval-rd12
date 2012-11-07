@@ -73,6 +73,9 @@ public class CMGR extends Command {
                 if(s.equals("OK")) {
                     status = Status.TERMINATED;
                     result = Result.OK;
+                    CMGD messageDelete = new CMGD();
+                    messageDelete.setIndex(index);
+                    Kernel.getCommandManager().process(messageDelete);
                     Kernel.getComponent().messageReceived(this);
                 } else if(s.contains("ERROR")) {
                     status = Status.TERMINATED;

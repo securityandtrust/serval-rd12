@@ -16,12 +16,19 @@ String sk = "87683e1e-c478-4c2a-b46e-f22bd6aca916";
 
 import fr.gn.karotz.Karotz;
 import fr.gn.karotz.actions.TextToSpeachAction;
+import fr.gn.karotz.msg.ResponseMessage;
+import fr.gn.karotz.msg.ServerAnswer;
 import fr.gn.karotz.utils.Languages;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 @Provides({
@@ -38,26 +45,66 @@ public class KarotzCmp  extends AbstractComponentType {
 
     private Karotz karotz;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KarotzCmp.class);
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private Future currentTimer = null;
+    private Future pendingMessage = null;
+
 
     @Port(name = "tts")
     public void onTtsRequest(Object o) {
 
         Properties p = (Properties)o;
 
-        logger.info("Initializing session for TTS, saying "+ (String)p.get("message"));
-        if(karotz.initSession()) {
-            karotz.send(new TextToSpeachAction((String)p.get("message"), Languages.EN));
-            try {
-                Thread.sleep((((String) p.get("message")).length() * 100) + 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        logger.info("Tootwï says: "+ (String)p.get("message"));
+
+            sendMessage((String)p.get("message"));
+
+
+    }
+
+    private void sendMessage(final String message) {
+        try {
+            if(karotz.initSession()) {
+
+                ServerAnswer answer = karotz.send(new TextToSpeachAction(message, Languages.EN));
+                if(answer instanceof ResponseMessage) {
+                    ResponseMessage response = (ResponseMessage)answer;
+                    if(response.getCode() == ResponseMessage.ResponseCode.ERROR) {
+                        if(pendingMessage != null && !pendingMessage.isDone()) {
+                            pendingMessage.cancel(true);
+                        }
+                        pendingMessage = executor.schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendMessage(message);
+                            }
+                        }, 2, TimeUnit.SECONDS);
+                    } else {
+                        if(currentTimer != null && !currentTimer.isDone()) {
+                            currentTimer.cancel(true);
+                        }
+                        currentTimer = executor.schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                karotz.closeSession();
+                            }
+                        }, 20, TimeUnit.SECONDS);
+                    }
+                } else {
+                    logger.error("Unknown server answer:" + answer.getClass().getName());
+                }
+            } else {
+                logger.warn("Couldn't init the session.");
+                pendingMessage = executor.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendMessage(message);
+                    }
+                }, 10, TimeUnit.SECONDS);
             }
-            karotz.closeSession();
-
-        } else {
-            logger.warn("Couldn't init the session.");
+        } catch (Exception e) {
+            logger.warn("Looks like Internet connection has been lost.\n" +e.getMessage());
         }
-
     }
 
     @Start
@@ -71,6 +118,13 @@ public class KarotzCmp  extends AbstractComponentType {
 
     @Stop
     public void stop(){
+        if(currentTimer != null) {
+            currentTimer.cancel(true);
+        }
+        if(pendingMessage != null) {
+            pendingMessage.cancel(true);
+        }
+        karotz.closeSession();
         karotz = null;
     }
 

@@ -95,15 +95,15 @@ public class Alert {
         result += "\tBEGIN:" + timeAlertBegin + "\n";
         result += "\tEND:" + timeAlertEnd + "\n";
 
-        result += "\t" + identityRecord.toString() + "\n";
-        result += "\t" + emergencyCallList.toString() + "\n";
-        result += "\t" + emergencyResponder.toString() + "\n";
-        result += "\tCommunications{\n";
+        result += "\t" + (identityRecord == null ? "None" : identityRecord.toString()) + "\n";
+        result += "\t" + (emergencyCallList == null ? "None" : emergencyCallList.toString()) + "\n";
+        result += "\t" + (emergencyResponder == null ? "None" : emergencyResponder.toString()) + "\n";
 
+        result += "\tCommunications{\n";
         for(EmergencyContact c : communications.keySet()) {
             result += "\t\t" + c.toString() + " {\n";
             for(EmergencyMessage m : communications.get(c)) {
-                    result += "\t\t\t" + m.toString()+"\n";
+                result += "\t\t\t" + m.toString()+"\n";
             }
             result+= "\t\t}\n";
         }

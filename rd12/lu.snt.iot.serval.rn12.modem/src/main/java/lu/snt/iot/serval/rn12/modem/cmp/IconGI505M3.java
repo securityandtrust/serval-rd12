@@ -4,6 +4,7 @@
  */
 package lu.snt.iot.serval.rn12.modem.cmp;
 
+import lu.snt.iot.serval.rn12.framework.data.ecl.EmergencyContact;
 import lu.snt.iot.serval.rn12.framework.data.msg.EmergencyMessage;
 import lu.snt.iot.serval.rn12.modem.cmd.*;
 import lu.snt.iot.serval.rn12.modem.core.Kernel;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -26,11 +28,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 })
 @Provides({
         @ProvidedPort(name="sendWithAck", type = PortType.MESSAGE),
-        @ProvidedPort(name="send", type = PortType.MESSAGE)
+        @ProvidedPort(name="send", type = PortType.MESSAGE),
+        @ProvidedPort(name="ackIn", type = PortType.MESSAGE)
 })
 
 @Requires({
-        @RequiredPort(name = "msgReceived", type = PortType.MESSAGE, optional = true)
+        @RequiredPort(name = "msgReceived", type = PortType.MESSAGE, optional = true),
+        @RequiredPort(name="ackOut", type = PortType.MESSAGE)
 })
 @ComponentType
 public class IconGI505M3 extends AbstractComponentType {
@@ -42,6 +46,8 @@ public class IconGI505M3 extends AbstractComponentType {
     private String serialPortName = "/dev/ttyHS2";
 
     private Hashtable<String,EmergencyMessage> messagesWaitingAck = new Hashtable<String,EmergencyMessage>();
+    private HashSet<EmergencyContact> contacts = new HashSet<EmergencyContact>();
+
 
     public IconGI505M3() {
         Kernel.setComponent(this);
@@ -50,11 +56,45 @@ public class IconGI505M3 extends AbstractComponentType {
         Kernel.setMessageReceiver(new MessageReceiver());
     }
 
+    @Ports({@Port(name="ackIn")})
+    public void ackReceivedFromAnotherMean(Object o) {
+        if(o instanceof EmergencyMessage) {
+            EmergencyMessage msg = (EmergencyMessage)o;
+            if(msg.getContact().getPhoneNumber() != null) {
+                for(String key : messagesWaitingAck.keySet()) {
+                    if(msg.getContact().getPhoneNumber().contains(key)) {
+                        messagesWaitingAck.remove(key);
+                        logger.debug("Answer for " + msg.getContact().getPhoneNumber() + " received by another mean.");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Port(name="send")
+    public void sendSmsNoAck(Object o) {
+        if(o instanceof EmergencyMessage) {
+            EmergencyMessage msg = (EmergencyMessage)o;
+            if(msg.getContact().getPhoneNumber() != null) {
+                Kernel.getCommandManager().process(new CMGF());
+
+                CMSG messageCommand = new CMSG();
+                messageCommand.setContent(msg.getMessage());
+                messageCommand.setPhoneNumber(msg.getContact().getPhoneNumber());
+                Kernel.getCommandManager().process(messageCommand);
+                contacts.add(msg.getContact());
+            } else {
+                logger.debug("No Phone number for this contact: " + msg.getContact().toString());
+            }
+        } else {
+            logger.error("Received an object to send, not instance of EmergencyMessage. Class" + o.getClass().getName());
+        }
+    }
 
 
-    @Ports({@Port(name="sendWithAck"),@Port(name="send")})
+    @Ports({@Port(name="sendWithAck")})
     public void sendSMS(Object o) {
-
 
         if(o instanceof EmergencyMessage) {
             EmergencyMessage msg = (EmergencyMessage)o;
@@ -68,6 +108,7 @@ public class IconGI505M3 extends AbstractComponentType {
 
                 logger.debug("Store " + msg.toString() + " at " + msg.getContact().getPhoneNumber());
                 messagesWaitingAck.put(msg.getContact().getPhoneNumber(), msg);
+                contacts.add(msg.getContact());
             } else {
                 logger.debug("No Phone number for this contact: " + msg.getContact().toString());
             }
@@ -91,17 +132,44 @@ public class IconGI505M3 extends AbstractComponentType {
             }
         }
 
+        MessagePort answer = (MessagePort) getPortByName("msgReceived");
+
         if(alert!= null) {
             logger.debug("Found " + alert + " for " + num);
-            MessagePort answer = (MessagePort) getPortByName("msgReceived");
+
             alert.setAnswer(message.getContent());
             if(isPortBinded("msgReceived")) {
+                if(isPortBinded("ackOut")) {
+                    ((MessagePort)getPortByName("ackOut")).process(alert);
+                }
                 answer.process(alert);
             } else {
                 logger.warn("Sms answer received, but port not binded.");
                 logger.warn(alert.toString());
             }
         } else {
+
+            EmergencyContact contact = new EmergencyContact();
+            contact.setPhoneNumber(message.getPhoneNumber());
+
+            for(EmergencyContact c : contacts) {
+                //try to find an existing contact.
+                if(message.getPhoneNumber().contains(c.getPhoneNumber())){
+                    contact = c;
+                    break;
+                }
+            }
+
+            EmergencyMessage m = new EmergencyMessage(contact,"");
+            m.setAnswer(message.getContent());
+            if(isPortBinded("msgReceived")) {
+                answer.process(m);
+            } else {
+                logger.warn("Sms received, but port not binded.");
+                logger.warn(m.toString());
+            }
+
+
             logger.warn("No message awaiting answer found for " + message.getPhoneNumber());
         }
 

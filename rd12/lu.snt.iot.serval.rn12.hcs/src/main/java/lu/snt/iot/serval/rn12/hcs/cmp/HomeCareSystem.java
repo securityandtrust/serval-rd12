@@ -6,6 +6,7 @@ import lu.snt.iot.serval.rn12.framework.data.ecl.EmergencyContact;
 import lu.snt.iot.serval.rn12.framework.data.id.IdentityRecord;
 import lu.snt.iot.serval.rn12.framework.data.msg.EmergencyMessage;
 import lu.snt.iot.serval.rn12.hcs.helpers.HcsHelper;
+import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
 import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
@@ -30,6 +31,7 @@ import java.util.*;
 
 @Requires({
         @RequiredPort(name="extCom", type=PortType.MESSAGE, optional = false),
+        @RequiredPort(name="extComNoAck", type=PortType.MESSAGE, optional = false),
         @RequiredPort(name="intCom", type=PortType.MESSAGE, optional = false),
         @RequiredPort(name="eclProvider", type=PortType.MESSAGE, optional = false),
         @RequiredPort(name="phrProvider", type=PortType.MESSAGE, optional = false)
@@ -39,6 +41,7 @@ import java.util.*;
 @Library(name = "Serval_RN12")
 public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType {
 
+    private boolean starting = true;
     private Alert ongoingAlert;
     private List<Alert> pastAlerts;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HomeCareSystem.class);
@@ -54,10 +57,13 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     @Port(name="doorSensor")
     public void onDoorSensorActivated(Object o) {
         if(ongoingAlert != null) {
+            if(ongoingAlert.getEmergencyResponder() != null) {
+                playOnIntercom("Hello " + ongoingAlert.getEmergencyResponder().getName() + " thank you for coming. I let you take care of " + ongoingAlert.getIdentityRecord().getFirstName());
+            }
             ongoingAlert.closeAlert();
-
             store(ongoingAlert);
             deployProxy(false);
+
             ongoingAlert = null;
             logger.info("End of Alert.");
         } else {
@@ -67,40 +73,45 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Port(name="needHelp")
     public void onHelpRequestReceived(Object o) {
-        logger.info("Beginning of ALERT : " + System.currentTimeMillis());
+        if(ongoingAlert != null) {
+            playOnIntercom("Dear Annette. An alert is currently being processed.");
+        } else {
+            logger.info("Beginning of ALERT : " + System.currentTimeMillis());
 
-        IdentityRecord identity = new IdentityRecord();
-        identity.setFirstName("Annette");
-        identity.setLastName("BECKER");
+            IdentityRecord identity = new IdentityRecord();
+            identity.setFirstName("Annette");
+            identity.setLastName("BECKER");
 
-        //build an alert entry
-        ongoingAlert = new Alert(identity);
+            //build an alert entry
+            ongoingAlert = new Alert(identity);
 
-        playOnIntercom("Annette. I received your request for help. I am processing it.");
+            playOnIntercom("Dear Annette. I received your request for help. I am processing it.");
 
-        //look for the emergency call list
-        logger.debug("Collecting ECL.");
-        ((MessagePort)getPortByName("eclProvider")).process(ongoingAlert.getIdentityRecord());
+            //look for the emergency call list
+            logger.debug("Collecting ECL.");
+            ((MessagePort)getPortByName("eclProvider")).process(ongoingAlert.getIdentityRecord());
+        }
+
     }
 
     private void deployProxy(boolean activate) {
         KevScriptEngine engine = getKevScriptEngineFactory().createKevScriptEngine();
         if(activate) {
-            engine.append("merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.7'");
-            engine.append("addComponent input@node0 : NodeJSProxy { ip='192.168.1.216',port='8868',remotePort='80' }");
+            engine.append("merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.9-SNAPSHOT'");
+            engine.append("addComponent proxy@node0 : NodeJSProxy { ip='192.168.1.154',port='8868',remotePort='80' }");
             try {
                 engine.interpretDeploy();
                 logger.info("VideoProxy deployed.");
             } catch (KevScriptEngineException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error(e.getMessage());
             }
         } else {
-            engine.append("removeComponent input@node0");
+            engine.append("removeComponent proxy@node0");
             try {
                 engine.interpretDeploy();
                 logger.info("VideoProxy removed.");
             } catch (KevScriptEngineException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.warn(e.getMessage());
             }
         }
 
@@ -108,22 +119,35 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
 
     @Port(name="textReceived")
     public void onMessageReceived(Object o) {
-
         if(o instanceof EmergencyMessage) {
             EmergencyMessage msg = (EmergencyMessage)o;
             if(ongoingAlert != null) {
                 if(ongoingAlert.getEmergencyResponder() == null) {
 
-                    if(HcsHelper.isAnswerPositive(msg)) {
+                    if(HcsHelper.isAnswerPositive(msg)) { //Positive answer, First response
                         ongoingAlert.setEmergencyResponder(msg.getContact());
                         deployProxy(true);
                         sendAccessInformation(msg.getContact());
-                    } else {
+                    } else {//Negative answer, First response
                         playOnIntercom(msg.getContact().getName()+ " can not come.");
                         askNextContact();
                     }
-                } else {
-                    playOnIntercom(msg.getContact().getName() + " just said, " + msg.getAnswer());
+                } else {//Somebody said yes !
+
+                    if(msg.getContact() == ongoingAlert.getEmergencyResponder()) {
+                       //The person who said yes, finally says no
+                        if( HcsHelper.isAnswerNegative(msg)) {
+                            sendMessageNoAck(msg.getContact(), "Ok. Thank you for telling.");
+                            playOnIntercom(msg.getContact().getName()+ " can not come.");
+                            ongoingAlert.setEmergencyResponder(null);
+                            askNextContact();
+                        }
+                    } else {
+                        //Somebody said yes, somebody else also says yes.
+                        if(HcsHelper.isAnswerPositive(msg)) {
+                            sendMessageNoAck(msg.getContact(), "Many thanks, but somebody is already taking care of " + ongoingAlert.getIdentityRecord().getFirstName());
+                        }
+                    }
                 }
             } else {
                 logger.warn("Received a message but no alert is ongoing." +  msg.getAnswer());
@@ -134,7 +158,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     }
 
     private void sendAccessInformation(EmergencyContact contact) {
-        sendMessage(contact, "The code to get in is: C0369X. You can also see what is happening on http://goo.gl/fusdr");
+        sendMessageNoAck(contact, "The key is in a safe box on the right of the door. The code is 7546. You can see what is happening on http://guest:g@192.168.1.152:8868");
         playOnIntercom(contact.getName() + " is on the way to come.");
     }
 
@@ -159,19 +183,35 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         message += " " + ongoingAlert.getIdentityRecord().getLastName();
         message += " requires assistance. Can you go and check now ?";
         EmergencyContact contact = ongoingAlert.getEmergencyCallList().getNextContact(ongoingAlert);
-        playOnIntercom("I try to contact " + contact.getName());
-        sendMessage(contact,message);
+        if(contact != null) {
+            playOnIntercom("I try to contact " + contact.getName());
+            sendMessageAck(contact, message);
+        } else {
+            playOnIntercom("Annette. I could not find somebody to come. I call the emergency services.");
+            logger.info("No more contact in the Emergency Call List. Forwarding the request to Emergency Services.");
+        }
     }
 
-    private void sendMessage(EmergencyContact contact, String message) {
+    private void sendMessageAck(EmergencyContact contact, String message) {
         if(ongoingAlert != null) {
             if(isPortBinded("extCom")) {
-
                 EmergencyMessage emergencyMessage = new EmergencyMessage(contact,message);
                 ongoingAlert.addCommunication(emergencyMessage);
-
                 ((MessagePort)getPortByName("extCom")).process(emergencyMessage);
+            } else {
+                logger.error("No external communication mean connected. Cannot send message.");
+            }
+        } else {
+            logger.error("AskNextContact called with no ongoing alert.");
+        }
+    }
 
+    private void sendMessageNoAck(EmergencyContact contact, String message) {
+        if(ongoingAlert != null) {
+            if(isPortBinded("extComNoAck")) {
+                EmergencyMessage emergencyMessage = new EmergencyMessage(contact,message);
+                ongoingAlert.addCommunication(emergencyMessage);
+                ((MessagePort)getPortByName("extComNoAck")).process(emergencyMessage);
             } else {
                 logger.error("No external communication mean connected. Cannot send message.");
             }
@@ -192,7 +232,20 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
         getModelService().registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
-                playOnIntercom("Hello. I just want to inform you, that the Home Care System is now ready to operate.");
+                if(starting) {
+                    playOnIntercom("Hello. I just want to inform you, that the Home Care System is now ready to operate.");
+                    starting = false;
+                }
+            }
+
+            @Override
+            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
+                //To change body of implemented methods use File | Settings | File Templates.
             }
         });
 

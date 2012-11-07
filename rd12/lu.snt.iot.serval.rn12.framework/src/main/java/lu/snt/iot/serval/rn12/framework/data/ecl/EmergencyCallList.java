@@ -34,10 +34,14 @@ public class EmergencyCallList {
             contactIndexes.put(alert,-1);
         }
         int nextIndex = contactIndexes.get(alert);
-        nextIndex++;
-        contactIndexes.put(alert, nextIndex);
-
-        return contactList.get(contactIndexes.get(alert));
+        if(!(nextIndex == (contactList.size()-1))) { //
+            nextIndex++;
+            contactIndexes.put(alert, nextIndex);
+            return contactList.get(nextIndex);
+        } else {
+            //No more contact
+            return null;
+        }
     }
 
     public String toString() {
