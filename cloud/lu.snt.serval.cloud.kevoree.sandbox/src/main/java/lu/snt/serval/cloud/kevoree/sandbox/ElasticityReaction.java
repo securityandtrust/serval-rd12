@@ -1,5 +1,10 @@
 package lu.snt.serval.cloud.kevoree.sandbox;
 
+import org.kevoree.ContainerRoot;
+import org.kevoree.KevoreeFactory;
+import org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper;
+import org.kevoree.tools.marShell.KevScriptOfflineEngine;
+
 /**
  * Created with IntelliJ IDEA.
  * User: duke
@@ -8,10 +13,39 @@ package lu.snt.serval.cloud.kevoree.sandbox;
  */
 public class ElasticityReaction {
 
-    public static void main(String[] args){
+    private final Integer numberOfInfraNode = 10;
 
-        System.out.println("Hello");
+    public static void main(String[] args) throws Exception{
+
+        ElasticityReaction bean = new ElasticityReaction();
+        ContainerRoot initModel = bean.initInfrastructureModel();
+        System.out.println(initModel.getNodes().size());
+
+        System.out.println(initModel);
 
     }
+
+
+
+
+    public ContainerRoot initInfrastructureModel() throws Exception{
+
+        ContainerRoot kevModel = KevoreeFactory.createContainerRoot();
+        KevScriptOfflineEngine kevScriptEngine = new KevScriptOfflineEngine(kevModel,new NodeTypeBootstrapHelper());
+        kevScriptEngine.addVariable("kevoree.version",KevoreeFactory.getVersion());
+        kevScriptEngine.append("merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.version}'");
+        for(int i=0;i<numberOfInfraNode;i++){
+            kevScriptEngine.append("addNode INode"+i+":PMiniCloudNode");
+            kevScriptEngine.append("updateDictionary INode"+i+" { CPU_FREQUENCY=\"1000\" }");
+        }
+        return kevScriptEngine.interpret();
+    }
+
+
+
+
+
+
+
 
 }
