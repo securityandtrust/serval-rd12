@@ -5,6 +5,9 @@ import org.kevoree.KevoreeFactory;
 import org.kevoree.framework.KevoreeXmiHelper;
 import org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper;
 import org.kevoree.tools.marShell.KevScriptOfflineEngine;
+import org.kevoree.tools.ui.editor.KevoreeEditor;
+
+import javax.swing.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,13 +27,18 @@ public class ElasticityReaction {
 
         ContainerNode overloadNode = bean.detectOverLoad(initModel);
         if(overloadNode != null){
-            initModel = bean.reallocate(initModel,overloadNode);
+            initModel = bean.reallocate(initModel, overloadNode);
         }
 
-
-        System.out.println(overloadNode.getName());
-
         KevoreeXmiHelper.save("/Users/duke/optimized.kev",initModel);
+
+        /* Display result */
+        KevoreeEditor artpanel = new KevoreeEditor();
+        artpanel.loadModel("/Users/duke/optimized.kev");
+        JFrame frame = new JFrame();
+        frame.add(artpanel.getPanel());
+        frame.setVisible(true);
+
 
     }
 
