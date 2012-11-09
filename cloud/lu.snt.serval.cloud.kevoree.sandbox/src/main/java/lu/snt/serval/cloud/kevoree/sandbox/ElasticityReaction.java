@@ -35,13 +35,10 @@ public class ElasticityReaction {
         if(overloadNode != null){
             initModel = bean.reallocate(initModel, overloadNode,bs);
         }
-
         //KevoreeXmiHelper.save("/Users/duke/optimized.kev",initModel);
-
         bean.displayModel(initModel); //Display After Optimisation
 
     }
-
 
     public void displayModel(ContainerRoot model) throws IOException {
         KevoreeEditor artpanel = new KevoreeEditor();
@@ -112,11 +109,26 @@ public class ElasticityReaction {
                         KevScriptOfflineEngine kevScriptEngine = new KevScriptOfflineEngine(model,bs);
                         kevScriptEngine.append("moveChild "+overloadedNode.getHostsForJ().get(0).getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
                         System.out.println("moveChild "+overloadedNode.getHostsForJ().get(0).getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
-                        return kevScriptEngine.interpret();
+                        ContainerRoot candidateModel = kevScriptEngine.interpret();
+                        if(!isSecurityViolated(candidateModel)){
+                           return candidateModel;
+                        }
                     }
                 }
             }
         }
         return model;
     }
+
+
+    public Boolean isSecurityViolated(ContainerRoot model){
+
+
+
+        return true;
+    }
+
+
+
+
 }
