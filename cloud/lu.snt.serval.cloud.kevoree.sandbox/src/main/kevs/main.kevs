@@ -17,9 +17,9 @@ merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.provider/{kevoree
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
 
 addNode node0:PMiniCloudNode
-addNode in1:PMiniCloudNode
-addNode in2:PMiniCloudNode
-addNode in3:PMiniCloudNode
+addNode in1:PMiniCloudNode { CPU_FREQUENCY = "1000"}
+addNode in2:PMiniCloudNode { CPU_FREQUENCY = "1000"}
+addNode in3:PMiniCloudNode { CPU_FREQUENCY = "1000"}
 
 addChild in1@node0
 addChild in2@node0
@@ -30,7 +30,7 @@ addToGroup sync node0
 addToGroup sync in1
 addToGroup sync in2
 addToGroup sync in3
-updateDictionary sync{port="8001",ip="0.0.0.0"}@node0
+updateDictionary sync{port="8000",ip="0.0.0.0"}@node0
 updateDictionary sync{port="8002",ip="0.0.0.0"}@in1
 updateDictionary sync{port="8003",ip="0.0.0.0"}@in2
 updateDictionary sync{port="8004",ip="0.0.0.0"}@in3

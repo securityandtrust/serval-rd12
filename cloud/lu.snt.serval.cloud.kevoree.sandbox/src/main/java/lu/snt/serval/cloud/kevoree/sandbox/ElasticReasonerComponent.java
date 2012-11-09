@@ -61,14 +61,14 @@ public class ElasticReasonerComponent extends AbstractComponentType implements M
         logger.info("Compute optimisation");
         //good us
         UUIDModel liveModel = getModelService().getLastUUIDModel();
-        ContainerNode overloadNode = bean.detectOverLoad(liveModel.getModel());
-        if (overloadNode != null) {
-            logger.info("Overload detected on node "+overloadNode);
+        ContainerNode detected = bean.patternDetection(liveModel.getModel());
+        if (detected != null) {
+            logger.info("Problem detected on node " + detected.getName());
             try {
-                ContainerRoot optimizedModel = bean.reallocate(liveModel.getModel(), overloadNode, getBootStrapperService());
-                getModelService().compareAndSwapModel(liveModel,optimizedModel);
+                ContainerRoot optimizedModel = bean.reallocate(liveModel.getModel(), detected, getBootStrapperService());
+                getModelService().compareAndSwapModel(liveModel, optimizedModel);
             } catch (Exception e) {
-                logger.error("",e);
+                logger.error("", e);
             }
         }
     }
