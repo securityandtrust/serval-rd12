@@ -36,7 +36,7 @@ public class ElasticityReaction {
             initModel = bean.reallocate(initModel, overloadNode,bs);
         }
 
-        KevoreeXmiHelper.save("/Users/duke/optimized.kev",initModel);
+        //KevoreeXmiHelper.save("/Users/duke/optimized.kev",initModel);
 
         bean.displayModel(initModel); //Display After Optimisation
 
