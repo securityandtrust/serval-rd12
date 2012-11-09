@@ -16,7 +16,8 @@ import org.kevoree.library.sky.api.nodeType.PJavaSENode;
 @NodeType
 @Library(name = "Snt-Cloud")
 @DictionaryType({
-        @DictionaryAttribute(name = "PRICE_PER_H")
+      //  @DictionaryAttribute(name = "PRICE_PER_H", optional = true),
+        @DictionaryAttribute(name = "OWNER")
 })
 public class CloudCustomerNode extends PJavaSENode {
 }

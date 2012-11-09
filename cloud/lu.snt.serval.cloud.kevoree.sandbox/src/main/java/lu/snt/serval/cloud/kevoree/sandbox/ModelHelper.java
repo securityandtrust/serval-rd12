@@ -10,6 +10,17 @@ import org.kevoree.*;
  */
 public class ModelHelper {
 
+    public static String stringProperty(Instance instance,String propName){
+        if(!instance.getDictionary().isEmpty()){
+            for(DictionaryValue value :  instance.getDictionary().get().getValuesForJ()){
+                if(value.getAttribute().getName().equals(propName)){
+                    return value.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public static Integer sumIntegerProperty(Instance instance,String propName){
         if(!instance.getDictionary().isEmpty()){
             for(DictionaryValue value :  instance.getDictionary().get().getValuesForJ()){
