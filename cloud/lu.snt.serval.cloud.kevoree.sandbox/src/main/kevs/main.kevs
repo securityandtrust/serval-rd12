@@ -4,7 +4,6 @@ merge 'mvn:lu.snt.serval.cloud.kevoree.sandbox/lu.snt.serval.cloud.kevoree.sandb
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.api/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.jails/{kevoree.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel.atom/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nioChannels/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.spray/{kevoree.version}'
@@ -16,8 +15,34 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.tjws/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.provider/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
+
 addNode node0:PMiniCloudNode
+addNode in1:PMiniCloudNode
+addNode in2:PMiniCloudNode
+addNode in3:PMiniCloudNode
+
+addChild in1@node0
+addChild in2@node0
+addChild in3@node0
+
 addGroup sync: BasicGroup
 addToGroup sync node0
+addToGroup sync in1
+addToGroup sync in2
+addToGroup sync in3
+updateDictionary sync{port="8001",ip="0.0.0.0"}@node0
+updateDictionary sync{port="8002",ip="0.0.0.0"}@in1
+updateDictionary sync{port="8003",ip="0.0.0.0"}@in2
+updateDictionary sync{port="8004",ip="0.0.0.0"}@in3
+
 addComponent ElasticRe660@node0 : ElasticReasonerComponent {}
+addComponent webServer@node0 : KTinyWebServer {port = "8080", timeout = "5000"}
+addComponent iaasPage@node0 : IaaSKloudResourceManagerPage { urlpattern="/"}
+addChannel requestChannel : defMSG
+addChannel responseChannel : defMSG
+bind webServer.handler@node0 => requestChannel
+bind iaasPage.request@node0 => requestChannel
+bind webServer.response@node0 => responseChannel
+bind iaasPage.content@node0 => responseChannel
+
 }

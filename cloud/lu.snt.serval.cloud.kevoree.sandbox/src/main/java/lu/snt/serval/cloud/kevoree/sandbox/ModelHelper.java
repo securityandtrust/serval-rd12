@@ -25,7 +25,11 @@ public class ModelHelper {
         if(!instance.getDictionary().isEmpty()){
             for(DictionaryValue value :  instance.getDictionary().get().getValuesForJ()){
                 if(value.getAttribute().getName().equals(propName)){
-                    return Integer.parseInt(value.getValue());
+                    try {
+                        return Integer.parseInt(value.getValue());
+                    } catch (Exception e){
+                         return 0;
+                    }
                 }
             }
         }
