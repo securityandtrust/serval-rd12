@@ -42,6 +42,12 @@
             <version>${kevoree.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.kevoree.corelibrary.sky</groupId>
+            <artifactId>org.kevoree.library.sky.minicloud</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
