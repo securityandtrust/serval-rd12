@@ -88,7 +88,7 @@ public class ElasticityReaction {
         kevScriptEngine.append("updateDictionary custDonia { OWNER=\"Donia\" }");
         kevScriptEngine.append("addChild custDonia@INode0");
         kevScriptEngine.append("addNode custDonia2:CloudCustomerNode");
-        kevScriptEngine.append("updateDictionary custDonia2 { OWNER=\"Donia\" }");
+        kevScriptEngine.append("updateDictionary custDonia2 { OWNER=\"Jorje\" }");
         kevScriptEngine.append("addChild custDonia2@INode0");
         return kevScriptEngine.interpret();
     }
@@ -100,14 +100,14 @@ public class ElasticityReaction {
     public ContainerNode patternDetection(ContainerRoot model){
         ContainerNode violated = detectOverLoad(model);
         if(violated != null){
-            System.out.println(">"+violated.getName());
+            System.out.println("overload >"+violated.getName());
             return violated;
         }
         violated = isSecurityViolated(model);
         if(violated != null){
             for(ContainerNode parentN :model.getNodesForJ()){
                if(parentN.getHostsForJ().contains(violated)){
-                   System.out.println(">"+violated.getName());
+                   System.out.println("security >"+violated.getName());
                    return parentN;
                }
             }
@@ -182,18 +182,16 @@ public class ElasticityReaction {
                         } else {
                             owners.put(newOwner,owners.get(newOwner)+1);
                         }
-                        if(owners.get(newOwner) > 1){
+                        if(owners.keySet().size() > 1){
                             System.out.println("isSecurityViolated for owner name = "+newOwner);
                             return child;
                         }
                     }
-
                 }
 
 
             }
         }
-         System.out.println("NoViolation");
         return null;
     }
 
