@@ -67,7 +67,7 @@ public class ElasticityReaction {
         kevScriptEngine.append("merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.version}'");
         for(int i=0;i<numberOfInfraNode;i++){
             kevScriptEngine.append("addNode INode"+i+":PMiniCloudNode");
-            kevScriptEngine.append("updateDictionary INode"+i+" { CPU_FREQUENCY=\"100000\" }");
+            kevScriptEngine.append("updateDictionary INode"+i+" { CPU_FREQUENCY=\"1000\" }");
         }
         return kevScriptEngine.interpret();
     }
