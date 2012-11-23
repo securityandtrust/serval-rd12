@@ -1,6 +1,6 @@
  {
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.version}'
-merge 'mvn:lu.snt.serval.cloud.kevoree.sandbox/lu.snt.serval.cloud.kevoree.sandbox/1.0-SNAPSHOT'
+merge 'mvn:lu.snt.serval.cloud.kevoree/lu.snt.serval.cloud.kevoree.sandbox/1.0-SNAPSHOT'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.api/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.jails/{kevoree.version}'
@@ -11,6 +11,7 @@ merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.provider.web/{kev
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.basicGossiper/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.tjws/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.provider/{kevoree.version}'
@@ -25,7 +26,7 @@ addChild in1@node0
 addChild in2@node0
 addChild in3@node0
 
-addGroup sync: BasicGroup
+addGroup sync: BasicGossiperGroup
 addToGroup sync node0
 addToGroup sync in1
 addToGroup sync in2

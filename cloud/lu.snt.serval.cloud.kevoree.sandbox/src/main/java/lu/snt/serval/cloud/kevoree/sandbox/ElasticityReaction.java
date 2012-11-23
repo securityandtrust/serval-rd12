@@ -21,38 +21,35 @@ import java.util.HashMap;
  */
 public class ElasticityReaction {
 
-    private final Integer numberOfInfraNode = 3;
+    public static Integer numberOfInfraNode = 3;
     private final String propertyName = "CPU_FREQUENCY";
 
     public static void main(String[] args) throws Exception{
+
         Bootstraper bs = new NodeTypeBootstrapHelper();
         ElasticityReaction bean = new ElasticityReaction();
         ContainerRoot initModel = bean.initInfrastructureModel(bs);
         initModel = bean.populateCustomerNode(initModel,bs);
 
-        bean.displayModel(initModel); //Display Before optimisation
-
+      //  bean.displayModel(initModel); //Display Before optimisation
         //run1
         ContainerNode detected = bean.patternDetection(initModel);
         if(detected != null){
             initModel = bean.reallocate(initModel, detected,bs);
         }
-        bean.displayModel(initModel); //Display After Optimisation
+       // bean.displayModel(initModel); //Display After Optimisation
 
         //run2
         detected = bean.patternDetection(initModel);
         if(detected != null){
             initModel = bean.reallocate(initModel, detected,bs);
         }
-        bean.displayModel(initModel); //Display After Optimisation
-
+        //bean.displayModel(initModel); //Display After Optimisation
     }
 
     public void displayModel(ContainerRoot model) throws IOException {
         KevoreeEditor artpanel = new KevoreeEditor();
-        File tf = File.createTempFile("0"+model.hashCode(),"0"+model.hashCode());
-        KevoreeXmiHelper.save(tf.getAbsolutePath(), model);
-        artpanel.loadModel(tf.getAbsolutePath());
+        artpanel.loadModelFromObject(model);
         JFrame frame = new JFrame();
         frame.add(artpanel.getPanel());
         frame.setVisible(true);
@@ -82,15 +79,19 @@ public class ElasticityReaction {
         kevScriptEngine.append("addNode cust1:PJavaSENode");
         kevScriptEngine.append("updateDictionary cust1 { CPU_FREQUENCY=\"800\" }");
         kevScriptEngine.append("addChild cust1@INode0");
+
         //CREATE CUSTOMER NODE ON INFRA 0
-        kevScriptEngine.append("merge 'mvn:lu.snt.serval.cloud.kevoree.sandbox/lu.snt.serval.cloud.kevoree.sandbox/1.0-SNAPSHOT'");
+        kevScriptEngine.append("merge 'mvn:lu.snt.serval.cloud.kevoree/lu.snt.serval.cloud.kevoree.sandbox/1.0-SNAPSHOT'");
         kevScriptEngine.append("addNode custDonia:CloudCustomerNode");
         kevScriptEngine.append("updateDictionary custDonia { OWNER=\"Donia\" }");
         kevScriptEngine.append("addChild custDonia@INode0");
         kevScriptEngine.append("addNode custDonia2:CloudCustomerNode");
         kevScriptEngine.append("updateDictionary custDonia2 { OWNER=\"Jorje\" }");
         kevScriptEngine.append("addChild custDonia2@INode0");
+
         return kevScriptEngine.interpret();
+
+
     }
 
 
@@ -98,16 +99,17 @@ public class ElasticityReaction {
 
     /* Pattern detection */
     public ContainerNode patternDetection(ContainerRoot model){
+       // long beginDetection = System.currentTimeMillis();
         ContainerNode violated = detectOverLoad(model);
         if(violated != null){
-            System.out.println("overload >"+violated.getName());
+           // System.out.println("overload >"+violated.getName());
             return violated;
         }
         violated = isSecurityViolated(model);
         if(violated != null){
             for(ContainerNode parentN :model.getNodesForJ()){
                if(parentN.getHostsForJ().contains(violated)){
-                   System.out.println("security >"+violated.getName());
+                   //System.out.println("security >"+violated.getName());
                    return parentN;
                }
             }
@@ -147,15 +149,17 @@ public class ElasticityReaction {
                     if(powerNeeded < (capacityPower - sumVal)){
                         KevScriptOfflineEngine kevScriptEngine = new KevScriptOfflineEngine(model,bs);
                         kevScriptEngine.append("moveChild "+overloadedNode.getHostsForJ().get(0).getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
-                        System.out.println("moveChild "+overloadedNode.getHostsForJ().get(0).getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
+                        //System.out.println("moveChild "+overloadedNode.getHostsForJ().get(0).getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
                         ContainerRoot candidateModel = kevScriptEngine.interpret();
                         ContainerNode nodeViolated=isSecurityViolated(candidateModel);
                         if( nodeViolated == null ){
                             return candidateModel;
                         } else {
                             KevScriptOfflineEngine kevScriptEngine2 =new KevScriptOfflineEngine(model,bs);
-                            kevScriptEngine2.append("moveChild "+nodeViolated.getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
-                            System.out.println("moveChild "+nodeViolated.getName()+"@"+overloadedNode.getName()+" => "+IAASNODE.getName());
+                            kevScriptEngine2.addVariable("nodeViolated",nodeViolated.getName());
+                            kevScriptEngine2.addVariable("overloadedNode",overloadedNode.getName());
+                            kevScriptEngine2.addVariable("iaasNode",IAASNODE.getName());
+                            kevScriptEngine2.append("moveChild {nodeViolated}@{overloadedNode} => {iaasNode}");
                             ContainerRoot candidateModel2 = kevScriptEngine2.interpret();
                             ContainerNode nodeViolated2=isSecurityViolated(candidateModel2);
                             if( nodeViolated2 == null ){
@@ -183,7 +187,7 @@ public class ElasticityReaction {
                             owners.put(newOwner,owners.get(newOwner)+1);
                         }
                         if(owners.keySet().size() > 1){
-                            System.out.println("isSecurityViolated for owner name = "+newOwner);
+                           // System.out.println("isSecurityViolated for owner name = "+newOwner);
                             return child;
                         }
                     }
