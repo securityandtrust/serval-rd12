@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Service Object" nsURI="http://defaultname/1.0" nsPrefix="defaultname">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="ServiceObject" nsURI="http://defaultname/1.0" nsPrefix="defaultname">
   <eClassifiers xsi:type="ecore:EClass" name="SLA">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//Service%20Object">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//ServiceObject">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="kind" value="attributeWildcard"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//Service%20Object"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//ServiceObject"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Service%20Contracting%20Partners" containment="true"/>
