@@ -7,10 +7,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="Customers" eType="#//Customer"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Constraints" eType="#//Constraint"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="SLOs" eType="#//SLO"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligations" lowerBound="1"
-        upperBound="-1" eType="#//Obligation"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Penalties" lowerBound="1"
         upperBound="-1" eType="#//Penalty" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligations" lowerBound="1"
+        upperBound="-1" eType="#//Obligation" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Provider"/>
   <eClassifiers xsi:type="ecore:EClass" name="Customer"/>
