@@ -23,7 +23,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Cluster">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Nodes" upperBound="-1"
-        eType="#//Node" containment="true" eOpposite="#//Node/cluster"/>
+        eType="#//Node.1" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
         eType="#//Service" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elasticityMechanism" lowerBound="1"
@@ -40,7 +40,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Node">
     <eStructuralFeatures xsi:type="ecore:EReference" name="virtualMachines" upperBound="-1"
-        eType="#//Node" eOpposite="#//Node/physicalMachines"/>
+        eType="#//Node.1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Customer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
@@ -53,11 +53,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="customer" lowerBound="1"
         eType="#//Customer" eOpposite="#//Customer/sla"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="agreements" upperBound="-1"
-        eType="#//Agreement" containment="true"/>
+        eType="#//Constraints" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="reports" upperBound="-1"
         eType="#//QosReport"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Agreement">
+  <eClassifiers xsi:type="ecore:EClass" name="Constraints">
     <eStructuralFeatures xsi:type="ecore:EReference" name="service" lowerBound="1"
         eType="#//Service"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metricType" lowerBound="1"
@@ -99,7 +99,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MManager">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Nodes" upperBound="-1"
-        eType="#//Node" containment="true"/>
+        eType="#//Node.1" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="physicalMachines" upperBound="-1"
         eType="#//Node.1" containment="true"/>
   </eClassifiers>
