@@ -32,8 +32,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="ServiceContractingPartners"/>
   <eClassifiers xsi:type="ecore:EClass" name="ServcieThirdPartners"/>
   <eClassifiers xsi:type="ecore:EClass" name="SLO">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="Penalty" lowerBound="1"
-        upperBound="-1" eType="#//Penalty" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Obligation" lowerBound="1"
         upperBound="-1" eType="#//Obligation" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Penalty" lowerBound="1"
@@ -59,11 +57,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="Servers" lowerBound="1"
         upperBound="-1" eType="#//Server"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ConstraintParameter" eSuperTypes="#//NegotiableConstraintParameter #//Criterion">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ParameterId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="Criterion" lowerBound="1"
-        upperBound="-1" eType="#//Criterion"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConstraintParameter"/>
   <eClassifiers xsi:type="ecore:EClass" name="Criteria">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Criteria" lowerBound="1"
         upperBound="-1" eType="#//Clause" containment="true"/>
