@@ -8,6 +8,7 @@
     <modules>
         <module>../lu.snt.serval.cloud.kevoree.sandbox</module>
         <module>../lu.snt.serval.cloud.kevoree.microbench</module>
+        <module>../lu.snt.serval.cloud.kevoree.sla.model</module>
     </modules>
     <dependencies>
         <dependency>
