@@ -9,7 +9,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ServiceObject" eType="#//ServiceObject"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ServiceContractingPartners" lowerBound="1" upperBound="-1"
         eType="#//ServiceContractingPartners" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ServiceThirdPartners" lowerBound="1"
         upperBound="-1" eType="#//ServcieThirdPartners" containment="true"/>
@@ -22,7 +22,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ServiceId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ServiceObject">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ServiceObject" lowerBound="1" upperBound="-1"
         eType="#//Functionality" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Functionality" lowerBound="1"
         upperBound="-1" eType="#//Functionality" containment="true"/>
@@ -34,11 +34,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="ServiceContractingPartners"/>
   <eClassifiers xsi:type="ecore:EClass" name="ServcieThirdPartners"/>
   <eClassifiers xsi:type="ecore:EClass" name="SLO">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligation" lowerBound="1" upperBound="-1"
         eType="#//Obligation"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Penalty" lowerBound="1" upperBound="-1"
         eType="#//Penalty" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligation" lowerBound="1" upperBound="-1"
         eType="#//Obligation" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Penalty" lowerBound="1"
         upperBound="-1" eType="#//Penalty" containment="true"/>
@@ -46,13 +46,13 @@
         upperBound="-1" eType="#//Obligation" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Functionality">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//DataObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Functionality" upperBound="-1" eType="#//DataObject"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ConstraintParameter" upperBound="-1"
         eType="#//ConstraintParameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DataObject" eSuperTypes="#//DataConstraint #//ConstraintParameter">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//DataOwner"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="DataObject" lowerBound="1" eType="#//DataOwner"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="DataAdministrator" lowerBound="1"
         eType="#//DataAdministrator"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="DataConstraint" lowerBound="1"
@@ -65,33 +65,33 @@
         upperBound="-1" eType="#//Server"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConstraintParameter" eSuperTypes="#//NegotiableConstraintParameter #//Criterion">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ConstraintParameter" lowerBound="1" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Criteria" lowerBound="1" upperBound="-1"
         eType="#//Criteria" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ParameterId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Criterion" lowerBound="1"
         upperBound="-1" eType="#//Criterion"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Criteria">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Criteria" lowerBound="1" upperBound="-1"
         eType="#//Clause" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Criteria" lowerBound="1" upperBound="-1"
         eType="#//Clause" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Clause"/>
   <eClassifiers xsi:type="ecore:EClass" name="Obligation">
     <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Penalty"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligation" lowerBound="1" eType="#//Penalty"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Object" lowerBound="1"
         upperBound="-1" eType="#//Object" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligation" lowerBound="1" upperBound="-1"
         eType="#//Action" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="Condition" lowerBound="1"
         upperBound="-1" eType="#//Condition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Penalty">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Penalty" lowerBound="1" upperBound="-1"
         eType="#//Obligation" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Object"/>
