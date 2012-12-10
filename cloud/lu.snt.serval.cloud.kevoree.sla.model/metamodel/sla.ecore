@@ -107,9 +107,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="DataLocationConstraint" eSuperTypes="#//DataConstraint"/>
   <eClassifiers xsi:type="ecore:EClass" name="DataSharingConstraint" eSuperTypes="#//DataConstraint"/>
   <eClassifiers xsi:type="ecore:EClass" name="Server"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Negotiable-constraint-Parameter">
+  <eClassifiers xsi:type="ecore:EClass" name="NegotiableconstraintParameter">
     <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//DataConstraint"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference1" eType="#//Negotiable-constraint-Parameter"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference1" eType="#//NegotiableconstraintParameter"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NegotiableConstraintParameter" eSuperTypes="#//Criteria #//ConstraintParameter"/>
   <eClassifiers xsi:type="ecore:EClass" name="NonNegotiableConstraints" eSuperTypes="#//Criteria #//ConstraintParameter"/>
