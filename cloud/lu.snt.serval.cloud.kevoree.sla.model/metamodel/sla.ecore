@@ -64,15 +64,13 @@
         eType="#//Server"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConstraintParameter" eSuperTypes="#//NegotiableConstraintParameter #//Criterion">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Parameter-ID"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Criteria" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ParameterId"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Criterion"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Parameter-ID"/>
   <eClassifiers xsi:type="ecore:EClass" name="Criteria">
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Clause" containment="true"/>
@@ -113,9 +111,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//DataConstraint"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="EReference1" eType="#//Negotiable-constraint-Parameter"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name=""/>
-  <eClassifiers xsi:type="ecore:EClass" name="NegotiableConstraintParameter" eSuperTypes="#//Criteria #//EClass1 #//ConstraintParameter"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NegotiableConstraintParameter" eSuperTypes="#//Criteria #//ConstraintParameter"/>
   <eClassifiers xsi:type="ecore:EClass" name="NonNegotiableConstraints" eSuperTypes="#//Criteria #//ConstraintParameter"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EClass1"/>
   <eClassifiers xsi:type="ecore:EClass" name="Criterion"/>
 </ecore:EPackage>
