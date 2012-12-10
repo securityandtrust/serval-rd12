@@ -19,7 +19,7 @@
         eType="#//ServiceContractingPartners" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//DataObject"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ServiceId"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ServiceId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ServiceObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
@@ -67,7 +67,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Criteria" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ParameterId"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ParameterId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
         eType="#//Criterion"/>
   </eClassifiers>
