@@ -13,6 +13,7 @@
         <module>../lu.snt.iot.serval.rn12.acm</module>
         <module>../lu.snt.iot.serval.rn12.modem</module>
         <module>../lu.snt.iot.serval.rn12.doorSensor</module>
+        <module>../lu.snt.iot.serval.rn12.doorlock</module>
         <module>../lu.snt.iot.serval.rn12.karotz</module>
         <module>../lu.snt.iot.serval.rn12.display</module>
         <module>../lu.snt.iot.serval.rn12.runtime</module>
@@ -23,7 +24,7 @@
   <name>Serval::ResearchersNights::ROOT</name>
 
     <properties>
-        <kevoree.version>1.8.9-SNAPSHOT</kevoree.version>
+        <kevoree.version>1.9.0-SNAPSHOT</kevoree.version>
         <slf4j.version>1.6.4</slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- EXAMPLE FOR MYSQL -->
