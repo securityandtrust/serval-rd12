@@ -4,9 +4,17 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.a
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
+
 addNode node0:JavaSENode
 addGroup sync: BasicGroup
 addToGroup sync node0
 updateDictionary sync{port="8000",ip="0.0.0.0"}@node0
 addComponent LoadSimu@node0 : LatencyComponent {Context="perf/cpu/node0"}
+
+addComponent sw@node0 : FakeSimpleSwitch
+addChannel triggerSW : defMSGT
+bind sw.on@node0 => triggerSW
+bind LoadSimu.trigger@node0 => triggerSW
+
 }

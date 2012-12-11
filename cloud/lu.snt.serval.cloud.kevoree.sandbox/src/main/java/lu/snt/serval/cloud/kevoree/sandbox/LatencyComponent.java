@@ -60,7 +60,7 @@ public class LatencyComponent extends AbstractComponentType implements Runnable 
     }
 
     @Port(name = "trigger")
-    public void triggerCalled() {
+    public void triggerCalled(Object o) {
         fillStack();
     }
 
