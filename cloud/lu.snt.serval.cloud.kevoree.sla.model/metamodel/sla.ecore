@@ -1,121 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="Service Object" nsURI="http://defaultname/1.0" nsPrefix="defaultname">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="cloud" nsURI="cloud" nsPrefix="cloud">
   <eClassifiers xsi:type="ecore:EClass" name="SLA">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//Service_Object">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attributeWildcard"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="1" eType="#//Service_Object"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Providers" eType="#//Provider"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Service_Contracting_Partners" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Service_Third_Partners" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//SLO" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Service_Contracting_Partners" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//Data_Object"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Service_ID"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Customers" eType="#//Customer"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Constraints" eType="#//Constraint"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="SLOs" eType="#//SLO"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Penalties" lowerBound="1"
+        upperBound="-1" eType="#//Penalty" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Obligations" lowerBound="1"
+        upperBound="-1" eType="#//Obligation" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Service_Object">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Functionality" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Functionality" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Data_Object" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Server"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Provider"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Customer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Constraint">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="DataLocationConstraints"
+        eType="#//DataLocationConstraint"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="PerformanceConstraints"
+        eType="#//PerformanceConstraint"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Service_Contracting_Partners"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Service_Third_Partners"/>
-  <eClassifiers xsi:type="ecore:EClass" name="SLO">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Obligation"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Penalty" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Obligation" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Penalty" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Obligation" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SLO"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Penalty"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DataLocationConstraint">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="DataLocationObligations"
+        eType="#//DataLocationObligation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="DataLocationPenalties"
+        eType="#//DataLocationPenalty"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Functionality">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//Data_Object"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//Constraint_Parameter"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PerformanceConstraint">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="NegotiableParameter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="NonNegotiableParameter"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Object" eSuperTypes="#//Data_Constraint #//Constraint_Parameter">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Data_Owner"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Data_Administrator"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Data_Constraint" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Data_Loss_Penalty" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Data_Owner"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Server"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Constraint_Parameter" eSuperTypes="#//Negotiable_Constraint_Parameter #//Criterion">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Parameter-ID"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Criteria" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Parameter_ID"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Criterion"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Parameter-ID"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Criteria">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Clause" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Clause" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Clause"/>
   <eClassifiers xsi:type="ecore:EClass" name="Obligation">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//EClass0"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//Penalty"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Object" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Action" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Condition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Conditions" lowerBound="1"
+        upperBound="-1" eType="#//Condition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Subjects" lowerBound="1"
+        upperBound="-1" eType="#//Subject" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Penalty">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Obligation" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DataLocationObligation" eSuperTypes="#//Obligation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DataLocationPenalty" eSuperTypes="#//Penalty"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Subject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Subjects" eType="#//Obligation"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EClass0"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Object"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Action"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Condition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Owner"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Administrator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Constraint"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Loss_Penalty" eSuperTypes="#//Penalty">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" upperBound="-1"
-        eType="#//Obligation" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Condition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Conditions" eType="#//Obligation"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Location_Constraint" eSuperTypes="#//Data_Constraint"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Data_Sharing_Constraint" eSuperTypes="#//Data_Constraint"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Server"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Negotiable-constraint-Parameter">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//Data_Constraint"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference1" eType="#//Negotiable-constraint-Parameter"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name=""/>
-  <eClassifiers xsi:type="ecore:EClass" name="Negotiable_Constraint_Parameter" eSuperTypes="#//Criteria #//EClass1 #//Constraint_Parameter"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Non_Negotiable_Constraints" eSuperTypes="#//Criteria #//Constraint_Parameter"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EClass1"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Criterion"/>
 </ecore:EPackage>
