@@ -6,6 +6,8 @@ import org.kevoree.context.DurationHistoryMetric;
 import org.kevoree.context.Metric;
 import org.kevoree.context.PutHelper;
 import org.kevoree.framework.AbstractComponentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +24,6 @@ import java.util.concurrent.TimeUnit;
  * User: jmeira
  * Date: 11/12/12
  * Time: 09:04
- * To change this template use File | Settings | File Templates.
  */
 
 @Library(name = "JavaSE")
@@ -35,24 +36,20 @@ import java.util.concurrent.TimeUnit;
         @DictionaryAttribute(name = "period", defaultValue = "2000", optional = true),
         @DictionaryAttribute(name = "Context")
 })
+@Provides({
+        @ProvidedPort(name = "trigger", type = PortType.MESSAGE)
+})
 public class LatencyComponent extends AbstractComponentType implements Runnable {
 
     private ScheduledExecutorService p = null;
     private LinkedList<Integer> fifo = new LinkedList<Integer>();
-    private Frame frame;
-
-
     private Metric met = null;
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Start
     public void start() throws Exception {
-        frame = new MyFrame("on");
-        frame.setVisible(true);
         p = Executors.newScheduledThreadPool(1);
-
-        met = PutHelper.getMetric(getModelService().getContextModel(),getDictionary().get("Context").toString(),PutHelper.getParam().setMetricTypeClazzName(DurationHistoryMetric.class.getName()).setNumber(1000));
-
+        met = PutHelper.getMetric(getModelService().getContextModel(), getDictionary().get("Context").toString(), PutHelper.getParam().setMetricTypeClazzName(DurationHistoryMetric.class.getName()).setNumber(1000));
         p.scheduleAtFixedRate(this, 0, Integer.parseInt(getDictionary().get("period").toString()), TimeUnit.MILLISECONDS);
     }
 
@@ -62,12 +59,14 @@ public class LatencyComponent extends AbstractComponentType implements Runnable 
         p = null;
     }
 
+    @Port(name = "trigger")
+    public void triggerCalled() {
+        fillStack();
+    }
 
-    public void fillStack(){
+    public void fillStack() {
         int i, j = 0;
-
         fifo.clear();
-
         for (i = 0; i < 100; i += Integer.parseInt(getDictionary().get("latencyPlus").toString())) {
             fifo.offer(i);
             if (i >= Integer.parseInt(getDictionary().get("latencyPeak").toString())) {
@@ -76,13 +75,9 @@ public class LatencyComponent extends AbstractComponentType implements Runnable 
                 }
             }
         }
-
-
         for (i = Integer.parseInt(getDictionary().get("latencyPeak").toString()); i > Integer.parseInt(getDictionary().get("latencyValue").toString()); i -= Integer.parseInt(getDictionary().get("latencyPlus").toString())) {
             fifo.offer(i);
         }
-
-
     }
 
 
@@ -95,68 +90,10 @@ public class LatencyComponent extends AbstractComponentType implements Runnable 
                 System.out.println(fifo.peek());
                 PutHelper.addValue(met, String.valueOf(fifo.poll()));
             }
-
-        } catch (
-                Exception e
-                )
-
-        {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("error while putting context in KevC model", e);
         }
     }
 
-    private class MyFrame extends JFrame {
-
-        private JButton on;
-
-        private String onText;
-
-        public MyFrame(final String onText) {
-
-            this.onText = onText;
-            on = new JButton(onText);
-            on.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                    fillStack();
-                }
-
-            });
-
-            ButtonGroup bg = new ButtonGroup();
-            bg.add(on);
-
-
-            setLayout(new FlowLayout());
-            add(on);
-
-
-            this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-            pack();
-            setVisible(true);
-        }
-
-
-        @Override
-
-
-        public void repaint() {
-            on.setText(onText);
-            super.repaint();
-        }
-
-
-        public final void setOnText(String onText) {
-            this.onText = onText;
-        }
-    }
-
-    public static void main(String[] args) throws Exception, InterruptedException {
-        LatencyComponent l = new LatencyComponent();
-        l.start();
-    }
 }
 
