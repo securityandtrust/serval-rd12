@@ -1,0 +1,93 @@
+ {
+addRepo "http://maven.sntiotlab.lu/snapshot"
+addRepo "http://repo1.maven.org/maven2"
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.sntiotlab.org/snapshot"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "http://repository.jetbrains.com/all"
+addRepo "http://maven.kevoree.org/archiva/repository/snapshots/"
+addRepo "http://maven.sntiotlab.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://maven.sntiotlab.lu/release"
+addRepo "http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/2.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.1.0-SNAPSHOT'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.1.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.1.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.1.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.1.0-SNAPSHOT'
+
+addNode neumunster:JavaSENode
+updateDictionary neumunster{logLevel="DEBUG",coreLogLevel="INFO"}
+addNode lab:JavaSENode
+updateDictionary lab{}
+ 
+  addComponent TYDOM360569@neumunster : TYDOM360 {serialPortName='/dev/ttyACM0'}
+  addComponent TYXIA142990@neumunster : TYXIA142 {device_id='168257'}
+  addComponent MiniCox788@neumunster : MiniCox {device_id='204019'}
+  addComponent Alekout@neumunster : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='f4cc9bcb-fe2f-4e6b-b054-76e810dc803b'}
+  addComponent Tootwi@neumunster : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+  addComponent Modem17@neumunster : XmppModem {login='entimid@gmail.com',password='entimidpass'}
+  addComponent IconGI505550@neumunster : IconGI505M3 {serialPort='/dev/wmodem0',pincode='1828'}
+  addComponent Emergency131@neumunster : EmergencyCallList {}
+  addComponent PersonalH306@neumunster : PersonalHealthRecord {}
+  addComponent HomeCareS678@neumunster : HomeCareSystem {}
+
+
+addChannel defMSG630 : defMSG {}
+addChannel defMSG94 : defMSG {}
+addChannel defMSG878 : defMSG {}
+addChannel defMSG410 : defMSG {}
+addChannel defMSG475 : defMSG {}
+addChannel defMSG770 : defMSG {}
+addChannel defMSG10 : defMSG {}
+addChannel defMSG685 : defMSG {}
+addChannel defMSG346 : defMSG {}
+addChannel defMSG654 : defMSG {}
+addChannel defMSG369 : defMSG {}
+addChannel defMSG653 : defMSG {}
+addChannel defMSG125 : defMSG {}
+bind Modem17.sendWithAck@neumunster => defMSG630
+bind HomeCareS678.extCom@neumunster => defMSG630
+bind Tootwi.tts@neumunster => defMSG94
+bind Alekout.tts@neumunster => defMSG94
+bind HomeCareS678.intCom@neumunster => defMSG94
+bind Emergency131.getList@neumunster => defMSG878
+bind HomeCareS678.eclProvider@neumunster => defMSG878
+bind PersonalH306.getRecord@neumunster => defMSG410
+bind HomeCareS678.phrProvider@neumunster => defMSG410
+bind TYXIA142990.x2dEvent@neumunster => defMSG475
+bind TYDOM360569.receive@neumunster => defMSG475
+bind HomeCareS678.textReceived@neumunster => defMSG770
+bind Modem17.msgReceived@neumunster => defMSG770
+bind HomeCareS678.needHelp@neumunster => defMSG10
+bind TYXIA142990.push_M1@neumunster => defMSG10
+bind HomeCareS678.doorSensor@neumunster => defMSG685
+bind HomeCareS678.phr@neumunster => defMSG346
+bind PersonalH306.PHR@neumunster => defMSG346
+bind HomeCareS678.ecl@neumunster => defMSG654
+bind Emergency131.ECL@neumunster => defMSG654
+bind MiniCox788.open@neumunster => defMSG685
+bind MiniCox788.close@neumunster => defMSG685
+bind MiniCox788.x2dEvent@neumunster => defMSG475
+bind TYXIA142990.push_M2@neumunster => defMSG10
+bind IconGI505550.sendWithAck@neumunster => defMSG630
+bind IconGI505550.msgReceived@neumunster => defMSG770
+bind Modem17.ackIn@neumunster => defMSG369
+bind IconGI505550.ackOut@neumunster => defMSG369
+bind IconGI505550.ackIn@neumunster => defMSG653
+bind Modem17.ackOut@neumunster => defMSG653
+bind IconGI505550.send@neumunster => defMSG125
+bind HomeCareS678.extComNoAck@neumunster => defMSG125
+bind Modem17.send@neumunster => defMSG125
+
+
+addGroup sync:BasicGroup
+addToGroup sync neumunster
+updateDictionary sync{port="8001",ip="192.168.1.152"}@neumunster
+addToGroup sync lab
+updateDictionary sync{port="8000",ip="158.64.78.42"}@lab
+}

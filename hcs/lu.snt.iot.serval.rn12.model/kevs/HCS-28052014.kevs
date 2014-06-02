@@ -1,0 +1,101 @@
+repo "http://oss.sonatype.org/content/repositories/releases/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.5.3
+include mvn:org.entimid.library.deltadore:org.entimid.library.deltadore.x2d.cmp:3.1.0
+include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.hcs:2.0-SNAPSHOT
+include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.karotz:2.0-SNAPSHOT
+include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.ecl:2.0-SNAPSHOT
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:3.5.3
+include mvn:org.kevoree.library.java:org.kevoree.library.java.xmpp:3.5.3
+include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.modem:2.0-SNAPSHOT
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:3.5.3
+
+add hcs : JavaNode/3.5.3
+set hcs.log = "TRACE"
+set hcs.started = "true"
+add hcs.XMPPModem : XmppModem/2.0-SNAPSHOT
+set hcs.XMPPModem.password = "entimidpass"
+set hcs.XMPPModem.login = "entimid@gmail.com"
+set hcs.XMPPModem.started = "true"
+add hcs.Tootwi : KarotzCmp/2.0-SNAPSHOT
+set hcs.Tootwi.secretKey = "87683e1e-c478-4c2a-b46e-f22bd6aca916"
+set hcs.Tootwi.applicationKey = "ae5e7b12-bea8-4c5a-80d5-cd88576a95e5"
+set hcs.Tootwi.installationId = "2b96ef18-b795-4b62-b528-29019c0e84d7"
+set hcs.Tootwi.started = "true"
+add hcs.EntryDoorSensor : MiniCox/3.1.0
+set hcs.EntryDoorSensor.device_id = "204019"
+set hcs.EntryDoorSensor.started = "true"
+add hcs.GSMModem : IconGI505M3/2.0-SNAPSHOT
+set hcs.GSMModem.pincode = "1828"
+set hcs.GSMModem.serialPort = "/dev/wmodem0"
+set hcs.GSMModem.started = "true"
+add hcs.Remote : TYXIA142/3.1.0
+set hcs.Remote.device_id = "168257"
+set hcs.Remote.started = "true"
+add hcs.hcs : HomeCareSystem/2.0-SNAPSHOT
+set hcs.hcs.started = "true"
+add hcs.X2DKey : TYDOM360/3.1.0
+set hcs.X2DKey.serialPortName = "/dev/ttyACM0"
+set hcs.X2DKey.started = "true"
+add hcs.Alekout : KarotzCmp/2.0-SNAPSHOT
+set hcs.Alekout.secretKey = "87683e1e-c478-4c2a-b46e-f22bd6aca916"
+set hcs.Alekout.applicationKey = "ae5e7b12-bea8-4c5a-80d5-cd88576a95e5"
+set hcs.Alekout.installationId = "a4ddc6a6-f865-4e54-9fc7-0441a0b3e142"
+set hcs.Alekout.started = "true"
+add hcs.ecl : EmergencyCallList/2.0-SNAPSHOT
+set hcs.ecl.started = "true"
+add chan925 : AsyncBroadcast/3.5.3
+set chan925.started = "true"
+add chan298 : AsyncBroadcast/3.5.3
+set chan298.started = "true"
+add chan210 : AsyncBroadcast/3.5.3
+set chan210.started = "true"
+add chan265 : AsyncBroadcast/3.5.3
+set chan265.started = "true"
+add chan980 : AsyncBroadcast/3.5.3
+set chan980.started = "true"
+add chan141 : AsyncBroadcast/3.5.3
+set chan141.started = "true"
+add chan692 : AsyncBroadcast/3.5.3
+set chan692.started = "true"
+add chan444 : SyncBroadcast/3.5.3
+set chan444.started = "true"
+add chan530 : AsyncBroadcast/3.5.3
+set chan530.started = "true"
+add chan877 : AsyncBroadcast/3.5.3
+set chan877.started = "true"
+add chan656 : AsyncBroadcast/3.5.3
+set chan656.started = "true"
+add sync : WSGroup/3.5.3
+set sync.port/node0 = "9000"
+set sync.started = "true"
+bind hcs.GSMModem.ackOut chan265
+bind hcs.X2DKey.receive chan877
+bind hcs.Remote.push_M2 chan444
+bind hcs.hcs.extCom chan298
+bind hcs.ecl.getList chan210
+bind hcs.Remote.push_M1 chan444
+bind hcs.hcs.doorSensor chan925
+bind hcs.Remote.x2dEvent chan877
+bind hcs.EntryDoorSensor.close chan925
+bind hcs.hcs.needHelp chan444
+bind hcs.XMPPModem.msgReceived chan141
+bind hcs.hcs.textReceived chan141
+bind hcs.XMPPModem.ackOut chan530
+bind hcs.EntryDoorSensor.open chan925
+bind hcs.GSMModem.sendWithAck chan298
+bind hcs.XMPPModem.sendWithAck chan298
+bind hcs.XMPPModem.send chan980
+bind hcs.EntryDoorSensor.x2dEvent chan877
+bind hcs.ecl.ECL chan656
+bind hcs.GSMModem.ackIn chan530
+bind hcs.GSMModem.send chan980
+bind hcs.hcs.intCom chan692
+bind hcs.hcs.extComNoAck chan980
+bind hcs.hcs.ecl chan656
+bind hcs.hcs.eclProvider chan210
+bind hcs.GSMModem.msgReceived chan141
+bind hcs.Tootwi.tts chan692
+bind hcs.XMPPModem.ackIn chan265
+bind hcs.Alekout.tts chan692
+attach hcs sync

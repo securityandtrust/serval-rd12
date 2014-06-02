@@ -5,7 +5,7 @@
     <parent>
         <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
         <groupId>lu.snt.iot.serval.rn12</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.1</version>
         <relativePath>../lu.snt.iot.serval.rn12.root/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>lu.snt.iot.serval.rn12</groupId>
             <artifactId>lu.snt.iot.serval.rn12.framework</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <!--<dependency>
             <groupId>org.kevoree.extra</groupId>

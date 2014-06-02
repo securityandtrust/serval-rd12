@@ -46,12 +46,12 @@ public class EarsTest {
 
         try {
 
-            jp.send(EarsAction.createReset());
+            jp.send(EarsAction.createReset(jp.getKernel()));
 
             EarsAction command;
 
             for (int i = 0; i < 5; i++) {
-                command = EarsAction.createLeftRelativeMove((i % 2 == 0 ? i : -i));
+                command = EarsAction.createLeftRelativeMove(jp.getKernel(), (i % 2 == 0 ? i : -i));
                 jp.send(command);
                 Thread.sleep(1000);
             }
@@ -66,10 +66,10 @@ public class EarsTest {
         try {
             EarsAction command;
 
-            jp.send(EarsAction.createReset());
+            jp.send(EarsAction.createReset(jp.getKernel()));
 
             for (int i = 0; i < 30; i++) {
-                command = EarsAction.createRightAbsoluteMove(i);
+                command = EarsAction.createRightAbsoluteMove(jp.getKernel(), i);
                 jp.send(command);
                 Thread.sleep(3000);
             }
@@ -87,9 +87,9 @@ public class EarsTest {
             EarsAction command;
             int pos = 1;
 
-            jp.send(EarsAction.createReset());
+            jp.send(EarsAction.createReset(jp.getKernel()));
 
-            command = EarsAction.createRightAbsoluteMove(pos);
+            command = EarsAction.createRightAbsoluteMove(jp.getKernel(), pos);
             jp.send(command);
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -100,12 +100,12 @@ public class EarsTest {
     @Test
     public void bothRealativePositionEarsTest() {
         try {
-            jp.send(EarsAction.createReset());
+            jp.send(EarsAction.createReset(jp.getKernel()));
 
             EarsAction command;
 
             for (int i = 0; i < 15; i++) {
-                command = EarsAction.createRelativeMove(i,-i);
+                command = EarsAction.createRelativeMove(jp.getKernel(), i,-i);
                 jp.send(command);
                 Thread.sleep(2000);
             }

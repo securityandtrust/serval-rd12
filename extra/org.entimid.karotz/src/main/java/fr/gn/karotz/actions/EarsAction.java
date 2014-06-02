@@ -27,8 +27,10 @@ public class EarsAction implements KarotzCommand {
     private int left;
     private int right;
     private boolean reset;
+    private Kernel kernel;
 
-    private EarsAction() {
+    private EarsAction(Kernel k) {
+        kernel = k;
     }
 
     /**
@@ -37,8 +39,8 @@ public class EarsAction implements KarotzCommand {
      * @param right absolute right ear position value. Range[0,15]
      * @return The KarotzCommand to be passed to {@link fr.gn.karotz.Karotz#send(KarotzCommand)}
      */
-    public static EarsAction createAbsoluteMove(int left, int right) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createAbsoluteMove(Kernel k, int left, int right) {
+        EarsAction command = new EarsAction(k);
         command.left = left;
         command.right = right;
         command.commantKind = BOTH + ABSOLUTE_MOVE;
@@ -46,15 +48,15 @@ public class EarsAction implements KarotzCommand {
     }
 
 
-    public static EarsAction createLeftAbsoluteMove(int left) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createLeftAbsoluteMove(Kernel k, int left) {
+        EarsAction command = new EarsAction(k);
         command.left = left;
         command.commantKind = LEFT_ONLY + ABSOLUTE_MOVE;
         return command;
     }
 
-    public static EarsAction createRightAbsoluteMove(int right) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createRightAbsoluteMove(Kernel k, int right) {
+        EarsAction command = new EarsAction(k);
         command.right = right;
         command.commantKind = RIGHT_ONLY + ABSOLUTE_MOVE;
         return command;
@@ -66,30 +68,30 @@ public class EarsAction implements KarotzCommand {
      * @param right relative position of right ear. If the value < 0, the ear moves to the REAR. Range[-15,15]
      * @return
      */
-    public static EarsAction createRelativeMove(int left, int right) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createRelativeMove(Kernel k, int left, int right) {
+        EarsAction command = new EarsAction(k);
         command.left = left;
         command.right = right;
         command.commantKind = BOTH;
         return command;
     }
 
-    public static EarsAction createLeftRelativeMove(int left) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createLeftRelativeMove(Kernel k, int left) {
+        EarsAction command = new EarsAction(k);
         command.left = left;
         command.commantKind = LEFT_ONLY;
         return command;
     }
 
-    public static EarsAction createRightRelativeMove(int right) {
-        EarsAction command = new EarsAction();
+    public static EarsAction createRightRelativeMove(Kernel k, int right) {
+        EarsAction command = new EarsAction(k);
         command.right = right;
         command.commantKind = RIGHT_ONLY;
         return command;
     }
 
-    public static EarsAction createReset() {
-        EarsAction command = new EarsAction();
+    public static EarsAction createReset(Kernel k) {
+        EarsAction command = new EarsAction( k);
         command.reset = true;
         return command;
     }
@@ -97,7 +99,7 @@ public class EarsAction implements KarotzCommand {
     @Override
     public String getCommand() {
 
-        String rootAddr = Kernel.getServerAddress() + "ears?";
+        String rootAddr = kernel.getServerAddress() + "ears?";
 
         if (reset) {
             rootAddr += "reset=true";
@@ -121,6 +123,6 @@ public class EarsAction implements KarotzCommand {
             }
         }
 
-        return rootAddr += "&interactiveid=" + Kernel.getInteractiveId();  //To change body of implemented methods use File | Settings | File Templates.
+        return rootAddr += "&interactiveid=" + kernel.getInteractiveId();  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -1,0 +1,81 @@
+ {
+addRepo "http://maven.kevoree.org/archiva/repository/snapshots/"
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "file:///Users/gregory.nain/.m2/repository"
+addRepo "http://repo1.maven.org/maven2"
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/{kevoree.version}'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.version}'
+addNode node0:StatefulJavaSENode
+ {
+  addComponent TYXIA142990@node0 : TYXIA142 {device_id='168257'}
+  addComponent TYDOM360569@node0 : TYDOM360 {serialPortName='/dev/ttyACM0'}
+  addComponent Modem17@node0 : XmppModem {login='entimid@gmail.com',password='entimidpass'}
+  addComponent KarotzCmp103@node0 : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+  addComponent Emergency131@node0 : EmergencyCallList {}
+  addComponent PersonalH306@node0 : PersonalHealthRecord {}
+  addComponent HomeCareS33@node0 : HomeCareSystem {}
+addChannel defMSG757 : defMSG {}
+addChannel defMSG370 : defMSG {}
+addChannel defMSG530 : defMSG {}
+addChannel defMSG354 : defMSG {}
+addChannel defMSG810 : defMSG {}
+addChannel defMSG312 : defMSG {}
+addChannel defMSG418 : defMSG {}
+addChannel defMSG519 : defMSG {}
+addChannel defMSG292 : defMSG {}
+addChannel defMSG634 : defMSG {}
+bind TYDOM360569.receive@node0 => defMSG757
+bind TYXIA142990.x2dEvent@node0 => defMSG757
+bind HomeCareS33.needHelp@node0 => defMSG370
+bind TYXIA142990.push_M1@node0 => defMSG370
+bind HomeCareS33.doorSensor@node0 => defMSG530
+bind TYXIA142990.push_M2@node0 => defMSG530
+bind Modem17.sendWithAck@node0 => defMSG354
+bind HomeCareS33.extCom@node0 => defMSG354
+bind HomeCareS33.ecl@node0 => defMSG810
+bind Emergency131.ECL@node0 => defMSG810
+bind KarotzCmp103.tts@node0 => defMSG312
+bind HomeCareS33.intCom@node0 => defMSG312
+bind HomeCareS33.eclProvider@node0 => defMSG418
+bind Emergency131.getList@node0 => defMSG418
+bind HomeCareS33.textReceived@node0 => defMSG519
+bind Modem17.msgReceived@node0 => defMSG519
+bind HomeCareS33.phr@node0 => defMSG292
+bind PersonalH306.PHR@node0 => defMSG292
+bind PersonalH306.getRecord@node0 => defMSG634
+bind HomeCareS33.phrProvider@node0 => defMSG634
+updateDictionary defMSG757 
+updateDictionary defMSG370 
+updateDictionary defMSG530 
+updateDictionary defMSG354 
+updateDictionary defMSG810 
+updateDictionary defMSG312 
+updateDictionary defMSG418 
+updateDictionary defMSG519 
+updateDictionary defMSG292 
+updateDictionary defMSG634 
+updateDictionary TYXIA142990@node0 
+updateDictionary TYDOM360569@node0 
+updateDictionary Modem17@node0 
+updateDictionary KarotzCmp103@node0 
+updateDictionary Emergency131@node0 
+updateDictionary PersonalH306@node0 
+updateDictionary HomeCareS33@node0 
+}
+
+addGroup sync:NanoRestGroup
+addToGroup sync node0
+}

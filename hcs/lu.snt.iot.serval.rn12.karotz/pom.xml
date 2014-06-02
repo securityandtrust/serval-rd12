@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
+        <groupId>lu.snt.iot.serval.rn12</groupId>
+        <version>2.0</version>
+        <relativePath>../lu.snt.iot.serval.rn12.root/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>lu.snt.iot.serval.rn12.karotz</artifactId>
+    <name>Serval::ResearchersNights::Karotz</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.bootstrap</artifactId>
+            <version>${kevoree.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.entimid</groupId>
+            <artifactId>karotz</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+    </dependencies>
+
+</project>

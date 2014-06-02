@@ -1,0 +1,77 @@
+{
+addRepo "http://repo1.maven.org/maven2"
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.sntiotlab.org/snapshot"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "http://maven.sntiotlab.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/2.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.1.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.1.0-SNAPSHOT'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.1.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/2.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webSocketGrp/2.0.0-SNAPSHOT'
+
+addNode neumunster:JavaSENode {
+    addComponent TYXIA142990@neumunster : TYXIA142 {device_id='168257'}
+    addComponent TYDOM360569@neumunster : TYDOM360 {serialPortName='/dev/ttyACM0'}
+    addComponent Modem17@neumunster : XmppModem {login='entimid@gmail.com',password='entimidpass'}
+    addComponent Tootwi@neumunster : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+    addComponent Alekout@neumunster : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='f4cc9bcb-fe2f-4e6b-b054-76e810dc803b'}
+    addComponent Emergency131@neumunster : EmergencyCallList {}
+    addComponent PersonalH306@neumunster : PersonalHealthRecord {}
+    addComponent HomeCareS33@neumunster : HomeCareSystem {}
+    addChannel defMSG757 : defMSG {}
+addChannel defMSG370 : defMSG {}
+addChannel defMSG530 : defMSG {}
+addChannel defMSG354 : defMSG {}
+addChannel defMSG810 : defMSG {}
+addChannel defMSG312 : defMSG {}
+addChannel defMSG418 : defMSG {}
+addChannel defMSG519 : defMSG {}
+addChannel defMSG292 : defMSG {}
+addChannel defMSG634 : defMSG {}
+bind TYDOM360569.receive@neumunster => defMSG757
+bind TYXIA142990.x2dEvent@neumunster => defMSG757
+bind HomeCareS33.needHelp@neumunster => defMSG370
+bind TYXIA142990.push_M1@neumunster => defMSG370
+bind HomeCareS33.doorSensor@neumunster => defMSG530
+bind TYXIA142990.push_M2@neumunster => defMSG530
+bind Modem17.sendWithAck@neumunster => defMSG354
+bind HomeCareS33.extCom@neumunster => defMSG354
+bind HomeCareS33.ecl@neumunster => defMSG810
+bind Emergency131.ECL@neumunster => defMSG810
+bind Tootwi.tts@neumunster => defMSG312
+bind Alekout.tts@neumunster => defMSG312
+bind HomeCareS33.intCom@neumunster => defMSG312
+bind HomeCareS33.eclProvider@neumunster => defMSG418
+bind Emergency131.getList@neumunster => defMSG418
+bind HomeCareS33.textReceived@neumunster => defMSG519
+bind Modem17.msgReceived@neumunster => defMSG519
+bind HomeCareS33.phr@neumunster => defMSG292
+bind PersonalH306.PHR@neumunster => defMSG292
+bind PersonalH306.getRecord@neumunster => defMSG634
+bind HomeCareS33.phrProvider@neumunster => defMSG634
+
+}
+updateDictionary neumunster{}
+
+addNode lab:JavaSENode {
+  
+}
+updateDictionary lab{}
+
+
+
+
+addGroup group1130556709:WebSocketGroupMasterServer
+addToGroup group1130556709 neumunster
+updateDictionary group1130556709{reconnectDelay="5000"}@neumunster
+addToGroup group1130556709 lab
+updateDictionary group1130556709{reconnectDelay="5000",port="8000"}@lab
+}

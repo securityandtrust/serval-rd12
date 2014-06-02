@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
+    <parent>
+        <groupId>lu.snt.iot.serval.rn12</groupId>
+        <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
+        <version>1.1.1</version>
+        <relativePath>../lu.snt.iot.serval.rn12.root/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <artifactId>lu.snt.iot.serval.rn12.proxy</artifactId>
+    <name>Serval::ResearchersNights::Proxy</name>
+
+    <repositories>
+        <repository>
+            <id>kevoree-release</id>
+            <url>http://maven.kevoree.org/release</url>
+        </repository>
+        <repository>
+            <id>kevoree-snapshots</id>
+            <url>http://maven.kevoree.org/snapshots</url>
+        </repository>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.org/release</url>
+        </repository>
+        <repository>
+            <id>iotlab-snapshots</id>
+            <url>http://maven.sntiotlab.org/snapshot</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>plugin.kevoree-github</id>
+            <url>http://maven.kevoree.org/release</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>plugin.kevoree-snapshots</id>
+            <url>http://maven.kevoree.org/snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <distributionManagement>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iotlab-snapshot</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

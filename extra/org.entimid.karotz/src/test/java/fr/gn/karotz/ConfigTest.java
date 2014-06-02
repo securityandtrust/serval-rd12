@@ -45,7 +45,7 @@ public class ConfigTest {
             jp.send(new KarotzCommand() {
                 @Override
                 public String getCommand() {
-                    return "http://api.karotz.com/api/karotz/config?interactiveid=" + Kernel.getInteractiveId();
+                    return "http://api.karotz.com/api/karotz/config?interactiveid=" + jp.getKernel().getInteractiveId();
                 }
             });
         } else {

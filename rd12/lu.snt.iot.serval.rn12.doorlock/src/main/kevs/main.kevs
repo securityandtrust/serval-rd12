@@ -1,0 +1,22 @@
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/{kevoree.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
+merge "mvn:org.kevoree.library.sample/org.kevoree.library.sample.javase.helloworld/{kevoree.version}"
+
+addNode node0 : JavaSENode {logLevel="DEBUG"}
+addGroup sync : NanoRestGroup
+addToGroup sync node0
+
+addComponent producer@node0 : HelloProducerComponent
+addComponent producer2@node0 : HelloProducerComponent
+addComponent door@node0 : DoorComponent
+addComponent consumer@node0 : HelloConsumerComponent
+addChannel defMSG : defMSG
+addChannel defMSG2 : defMSG
+
+bind producer.produce@node0 => defMSG
+bind consumer.consume@node0 => defMSG
+
+bind producer2.produce@node0 => defMSG2
+bind door.consume@node0 => defMSG2
+

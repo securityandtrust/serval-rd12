@@ -11,70 +11,70 @@ import fr.gn.karotz.utils.KarotzSigner;
  * Date: 21/05/11
  * Time: 10:18
  */
-public abstract class Kernel {
+public class Kernel {
 
-    private static String apiKey;
+    private String apiKey;
 
-    public static String getApiKey() {
+    public String getApiKey() {
         return apiKey;
     }
 
-    public static void setApiKey(String apiKey) {
-        Kernel.apiKey = apiKey;
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
 
-    private static String secretKey;
+    private String secretKey;
 
-    public static String getSecretKey() {
+    public String getSecretKey() {
         return secretKey;
     }
 
-    public static void setSecretKey(String secretKey) {
-        Kernel.secretKey = secretKey;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
 
-    private static String interactiveId;
+    private String interactiveId;
 
-    public static String getInteractiveId() {
+    public String getInteractiveId() {
         return interactiveId;
     }
 
-    public static void setInteractiveId(String interactiveId) {
-        Kernel.interactiveId = interactiveId;
+    public void setInteractiveId(String interactiveId) {
+        this.interactiveId = interactiveId;
     }
 
 
-    private static KarotzSigner signer;
+    private KarotzSigner signer;
 
-    public static KarotzSigner getSigner() {
+    public KarotzSigner getSigner() {
         return signer;
     }
 
-    public static void setSigner(KarotzSigner signer) {
-        Kernel.signer = signer;
+    public void setSigner(KarotzSigner signer) {
+        this.signer = signer;
     }
 
 
-    private static String installId;
+    private String installId;
 
-    public static String getInstallId() {
+    public String getInstallId() {
         return installId;
     }
 
-    public static void setInstallId(String installId) {
-        Kernel.installId = installId;
+    public void setInstallId(String installId) {
+        this.installId = installId;
     }
 
 
-    private static String serverAddress;
+    private String serverAddress;
 
-    public static String getServerAddress() {
+    public String getServerAddress() {
         return serverAddress;
     }
 
-    public static void setServerAddress(String serverAddress) {
-        Kernel.serverAddress = serverAddress;
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
     }
 }

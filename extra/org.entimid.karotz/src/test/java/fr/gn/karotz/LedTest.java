@@ -48,17 +48,17 @@ public class LedTest {
 
         try {
 
-            LedAction led = LedAction.createLightCommand(Color.BLUE);
+            LedAction led = LedAction.createLightCommand(jp.getKernel(), Color.BLUE);
             jp.send(led);
 
             Thread.sleep(2000);
 
-            led = LedAction.createLightCommand(Color.YELLOW);
+            led = LedAction.createLightCommand(jp.getKernel(), Color.YELLOW);
             jp.send(led);
 
             Thread.sleep(2000);
 
-            led = LedAction.createLightCommand(Color.BLACK);
+            led = LedAction.createLightCommand(jp.getKernel(), Color.BLACK);
             jp.send(led);
 
         } catch (InterruptedException e) {
@@ -71,22 +71,22 @@ public class LedTest {
         try {
 
             //Blue Fade UP
-            LedAction led = LedAction.createFadeCommand(Color.BLUE, 1500);
+            LedAction led = LedAction.createFadeCommand(jp.getKernel(), Color.BLUE, 1500);
             jp.send(led);
             Thread.sleep(1500);
 
             //Blue Fade DOWN
-            led = LedAction.createFadeCommand(Color.BLACK, 1500);
+            led = LedAction.createFadeCommand(jp.getKernel(), Color.BLACK, 1500);
             jp.send(led);
             Thread.sleep(1500);
 
             //yellow Fade UP
-            led = LedAction.createFadeCommand(Color.YELLOW, 1500);
+            led = LedAction.createFadeCommand(jp.getKernel(), Color.YELLOW, 1500);
             jp.send(led);
             Thread.sleep(1500);
 
             //Yellow Fade DOWN
-            led = LedAction.createFadeCommand(Color.BLACK, 1500);
+            led = LedAction.createFadeCommand(jp.getKernel(), Color.BLACK, 1500);
             jp.send(led);
             Thread.sleep(1500);
 
@@ -99,21 +99,21 @@ public class LedTest {
     public void pulseTest() {
         try {
             //Set Base Color to black
-            LedAction led = LedAction.createLightCommand(Color.BLACK);
+            LedAction led = LedAction.createLightCommand(jp.getKernel(), Color.BLACK);
             jp.send(led);
 
             //Pulse Black-Blue 200ms ON during 1,5s
-            led = LedAction.createPulseCommand(Color.BLUE, 5, 1500);
+            led = LedAction.createPulseCommand(jp.getKernel(), Color.BLUE, 5, 1500);
             jp.send(led);
             Thread.sleep(1500);
 
 
             //Set Base Color to black
-            led = LedAction.createLightCommand(Color.BLACK);
+            led = LedAction.createLightCommand(jp.getKernel(), Color.BLACK);
             jp.send(led);
 
             //Pulse Black-Blue 500ms ON during 1,5s
-            led = LedAction.createPulseCommand(Color.YELLOW, 2, 1500);
+            led = LedAction.createPulseCommand(jp.getKernel(), Color.YELLOW, 2, 1500);
             jp.send(led);
 
             Thread.sleep(1500);

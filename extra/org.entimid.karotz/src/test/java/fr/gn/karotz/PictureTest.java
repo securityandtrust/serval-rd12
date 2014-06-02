@@ -47,7 +47,7 @@ public class PictureTest {
     @Test
     public void getPictureTest() {
 
-        WebcamAction wac = new WebcamAction(4444);
+        WebcamAction wac = new WebcamAction(jp.getKernel(), 4444);
         wac.engageReceiver();
         jp.send(wac);
 

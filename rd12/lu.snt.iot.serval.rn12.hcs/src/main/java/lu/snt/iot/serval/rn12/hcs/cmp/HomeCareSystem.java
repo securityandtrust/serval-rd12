@@ -97,8 +97,12 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     private void deployProxy(boolean activate) {
         KevScriptEngine engine = getKevScriptEngineFactory().createKevScriptEngine();
         if(activate) {
-            engine.append("merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.9-SNAPSHOT'");
-            engine.append("addComponent proxy@node0 : NodeJSProxy { ip='192.168.1.154',port='8868',remotePort='80' }");
+            /*
+            merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.proxy/1.1.0-SNAPSHOT'
+            addComponent proxy@lab : HaProxy
+             */
+            engine.append("merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.proxy/1.1.0-SNAPSHOT'");
+            engine.append("addComponent proxy@lab : HaProxy");
             try {
                 engine.interpretDeploy();
                 logger.info("VideoProxy deployed.");
@@ -106,7 +110,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
                 logger.error(e.getMessage());
             }
         } else {
-            engine.append("removeComponent proxy@node0");
+            engine.append("removeComponent proxy@lab");
             try {
                 engine.interpretDeploy();
                 logger.info("VideoProxy removed.");
@@ -158,7 +162,7 @@ public class HomeCareSystem extends org.kevoree.framework.AbstractComponentType 
     }
 
     private void sendAccessInformation(EmergencyContact contact) {
-        sendMessageNoAck(contact, "The key is in a safe box on the right of the door. The code is 7546. You can see what is happening on http://guest:g@192.168.1.152:8868");
+        sendMessageNoAck(contact, "The key is in a safe box on the right of the door. The code is 7546. You can see what is happening on http://gate.sntiotlab.lu:4001");
         playOnIntercom(contact.getName() + " is on the way to come.");
     }
 

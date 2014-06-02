@@ -15,6 +15,7 @@ String sk = "87683e1e-c478-4c2a-b46e-f22bd6aca916";
 */
 
 import fr.gn.karotz.Karotz;
+import fr.gn.karotz.actions.MultimediaAction;
 import fr.gn.karotz.actions.TextToSpeachAction;
 import fr.gn.karotz.msg.ResponseMessage;
 import fr.gn.karotz.msg.ServerAnswer;
@@ -55,7 +56,7 @@ public class KarotzCmp  extends AbstractComponentType {
 
         Properties p = (Properties)o;
 
-        logger.info("Tootwï says: "+ (String)p.get("message"));
+        logger.info(getName() + " says: "+ (String)p.get("message"));
 
             sendMessage((String)p.get("message"));
 
@@ -66,7 +67,7 @@ public class KarotzCmp  extends AbstractComponentType {
         try {
             if(karotz.initSession()) {
 
-                ServerAnswer answer = karotz.send(new TextToSpeachAction(message, Languages.EN));
+                ServerAnswer answer = karotz.send(new MultimediaAction(karotz.getKernel(), message, Languages.EN));
                 if(answer instanceof ResponseMessage) {
                     ResponseMessage response = (ResponseMessage)answer;
                     if(response.getCode() == ResponseMessage.ResponseCode.ERROR) {

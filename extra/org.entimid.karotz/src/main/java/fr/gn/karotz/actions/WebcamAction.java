@@ -22,9 +22,10 @@ public class WebcamAction implements KarotzCommand {
     private String callBackIp;
     private int callBackPort;
     private PictureReceiver receiver;
+    private Kernel kernel;
 
-    public WebcamAction(int callBackPort) {
-
+    public WebcamAction(Kernel k, int callBackPort) {
+        kernel = k;
         try {
             callBackIp = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
@@ -37,7 +38,7 @@ public class WebcamAction implements KarotzCommand {
 
     @Override
     public String getCommand() {
-        return Kernel.getServerAddress() + "webcam?action=photo&url=http://"+callBackIp+":"+callBackPort+"/"+"&interactiveid=" + Kernel.getInteractiveId();
+        return kernel.getServerAddress() + "webcam?action=photo&url=http://"+callBackIp+":"+callBackPort+"/"+"&interactiveid=" + kernel.getInteractiveId();
     }
 
 

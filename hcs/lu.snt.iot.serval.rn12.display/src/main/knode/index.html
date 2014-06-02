@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<LINK REL=StyleSheet HREF="css/woork.css" TYPE="text/css" />
+	<script src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="./client.js"></script>
+	<link href="video-js/video-js.css" rel="stylesheet" type="text/css">
+	<script src="video-js/video.js"></script>
+	<script type="text/javascript" src="js/cycle.all.js"></script>
+
+</head>
+<body>
+	<table width="1184px" height="250px">
+		<tr height="250">
+			<td width="30%">
+				<table width="100%">
+					<tr>
+						<td width="34%" align="center"><img src="img/snt-logo.png" height="70px" /></td>
+						<td width="33%" align="center"><img src="img/uni-logo.png" height="70px"/></td>
+						<td width="33%" align="center"><img src="img/pet-logo.gif" height="60px"/></td>
+					</tr>
+					<tr><td colspan=3 width="100%" align="center"><img src="img/kevoree-logo.png" height="150px"/></td></tr>
+				</table>
+			</td>
+			<td valign="top" >
+					<table width=100%>
+						<tr align="center"><td><font style="font-size:30px; font-family:courier;">System status :</font></td></tr>
+						<tr align="center"><td valign="top">
+							<table width="70%"><tr align="center"><td id="connection_state" width="10px">OFFLINE</td></tr>
+							</table>
+						</td></tr>
+						<tr align="center"><td><font style="font-size:30px; font-family:courier;">System location :</font></td></tr>
+						<tr align="center"><td valign="top">
+							<table width="100%"><tr align="center">
+								<td width="10px">
+								<input readonly="readonly" type="text" id="system_ip" width="10px" size=16 value="192.168.1.152" />:<input type="text" size=12 id="system_port" readonly="readonly" width="10px" value="1337"/>
+								</td>
+							</tr></table>
+						</td></tr>
+					</table>
+			</td>
+			<td width="480px" align="center">
+				<div  class="slideshow" style="text-align:center">
+					<!--<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />-->
+                    <img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/DSCF3454.JPG" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<video id="example_video_2" class="video-js vjs-default-skin" controls preload="auto" height="250"  width="480" data-setup="{}">
+						<source src="videos/Test12.mov" type='video/mp4' />
+					</video>
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/DSCF3456.JPG" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat01.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat02.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat03.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/DSCF3452.JPG" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat04.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" height="250" width="480" data-setup="{}">
+						<source src="videos/test3ter.mov" type='video/mp4' />
+					</video>
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/DSCF3450.JPG" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat05.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat06.jpeg" />
+					<img height="250" src="http://cam1.sntiotlab.lu/mjpg/video.mjpg?streamprofile=LabView" />
+					<img height="250" src="pictures/sat07.jpeg" />
+				</div>
+			</td>
+		</tr>
+</table>
+<div id="content"></div>
+
+
+    <script type="text/javascript">
+
+        _V_.options.flash.swf = "video-js/video-js.swf";
+
+        var videoEnded = function(){
+            $('.slideshow').cycle('next');
+        };
+
+        function onAfter(currSlideElement, nextSlideElement, options, forwardFlag) {
+
+            if(nextSlideElement.tagName == "IMG") {
+                $('.slideshow').cycle('resume');
+            } else {
+                $('.slideshow').cycle('pause');
+                var videoId = nextSlideElement.id;
+                var videoElement = _V_(""+videoId);
+                videoElement.play();
+            }
+        }
+
+
+
+        $(document).ready(function() {
+            if ("WebSocket" in window) {
+                //alert("WebSocket is supported by your Browser!");
+                // Let us open a web socket
+                connectWebSocket();
+
+            } else {
+                alert("WebSocket NOT supported by your Browser!");
+            }
+
+            _V_("example_video_1").addEvent("ended", videoEnded);
+            _V_("example_video_2").addEvent("ended", videoEnded);
+            $('.slideshow').cycle({
+                fx: 'fade', // choose your transition type, ex: fade, scrollUp, shuffle, etc...
+                after: onAfter,
+                width:480,
+                height:250,
+                timeout: 20000
+            });
+        });
+    </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ import fr.gn.karotz.session.InteractiveAction;
 import fr.gn.karotz.session.InteractiveCommand;
 import fr.gn.karotz.utils.KarotzCommand;
 import fr.gn.karotz.utils.KarotzSigner;
-import org.slf4j.LoggerFactory;
+import org.kevoree.log.Log;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Mac;
@@ -35,32 +35,35 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Karotz implements KarotzSigner {
 
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Karotz.class);
+    private Kernel kernel = new Kernel();
 
     public Karotz(String apiKey, String secretKey, String installId) {
-        Kernel.setApiKey(apiKey);
-        Kernel.setSecretKey(secretKey);
-        Kernel.setInstallId(installId);
-        Kernel.setSigner(this);
-        Kernel.setServerAddress("http://api.karotz.com/api/karotz/");
+        kernel.setApiKey(apiKey);
+        kernel.setSecretKey(secretKey);
+        kernel.setInstallId(installId);
+        kernel.setSigner(this);
+        kernel.setServerAddress("http://api.karotz.com/api/karotz/");
 
     }
 
+    public Kernel getKernel() {
+        return kernel;
+    }
+
     public boolean isSessionActive() {
-        return Kernel.getInteractiveId() != null;
+        return kernel.getInteractiveId() != null;
     }
 
     public boolean initSession() {
         if(isSessionActive()) {
             return true;
         } else {
-            InteractiveCommand startSession = new InteractiveCommand(InteractiveAction.START);
+            InteractiveCommand startSession = new InteractiveCommand(kernel, InteractiveAction.START);
             ServerAnswer answ = send(startSession);
             if( answ instanceof InteractiveModeMessage) {
                 InteractiveModeMessage msg = (InteractiveModeMessage)answ;
                 if(msg.getInteractiveId() != null) {
-                    Kernel.setInteractiveId(msg.getInteractiveId());
+                    kernel.setInteractiveId(msg.getInteractiveId());
                     return true;
                 } else {
                     return false;
@@ -72,10 +75,10 @@ public class Karotz implements KarotzSigner {
 
     public boolean closeSession() {
         if(isSessionActive()) {
-            InteractiveCommand closeSession = new InteractiveCommand(InteractiveAction.STOP);
+            InteractiveCommand closeSession = new InteractiveCommand(kernel, InteractiveAction.STOP);
             ResponseMessage closedMessage = (ResponseMessage) send(closeSession);
             if(closedMessage.getCode() == ResponseMessage.ResponseCode.OK){
-                Kernel.setInteractiveId(null);
+                kernel.setInteractiveId(null);
                 return true;
             } else {
                 return false;
@@ -89,24 +92,24 @@ public class Karotz implements KarotzSigner {
     public ServerAnswer send(KarotzCommand command) {
         try {
 
-            logger.debug("Sending request: " + command.getCommand());
+            Log.debug("Sending request: " + command.getCommand());
             URL serverInteractiveIdQuery = new URL(command.getCommand());
 
             HttpURLConnection connection = (HttpURLConnection) serverInteractiveIdQuery.openConnection();
 
             BufferedReader br;
             if (connection.getResponseCode() >= 500) {
-                logger.warn("Error code returned: " + connection.getResponseCode());
+                Log.warn("Error code returned: " + connection.getResponseCode());
                 br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 
                 String line;
                 while ((line = br.readLine()) != null) {
-                    logger.error(line);
+                    Log.error(line);
                 }
 
             } else {
                 ServerAnswer answer = ServerAnswer.parse(connection.getInputStream());
-                logger.debug("\nServerAnswer: " + answer.toString() + "\n==============================\n");
+                Log.debug("\nServerAnswer: " + answer.toString() + "\n==============================\n");
 
                 return answer;
             }
@@ -122,7 +125,7 @@ public class Karotz implements KarotzSigner {
 
         try {
 
-            SecretKeySpec signingKey = new SecretKeySpec(Kernel.getSecretKey().getBytes("UTF-8"), "HmacSHA1");
+            SecretKeySpec signingKey = new SecretKeySpec(kernel.getSecretKey().getBytes("UTF-8"), "HmacSHA1");
             Mac mac = Mac.getInstance("HmacSHA1");
             mac.init(signingKey);
 

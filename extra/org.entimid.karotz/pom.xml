@@ -7,9 +7,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.entimid</groupId>
-    <artifactId>Karotz</artifactId>
+    <artifactId>karotz</artifactId>
     <name>EnTiMid - Karotz</name>
-    <version>1.0.0</version>
+    <version>1.2.0</version>
 
     <dependencies>
         <dependency>
@@ -24,9 +24,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
+            <groupId>org.kevoree.log</groupId>
+            <artifactId>org.kevoree.log</artifactId>
+            <version>1</version>
         </dependency>
     </dependencies>
 
@@ -44,33 +44,17 @@
 
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>Local Deploy</id>
-            <activation><activeByDefault>true</activeByDefault></activation>
-            <distributionManagement>
-                <repository>
-                    <id>serval-releases-local</id>
-                    <url>file://${user.home}/.m2/repository</url>
-                </repository>
-                <snapshotRepository>
-                    <id>serval-snapshots-local</id>
-                    <url>file://${user.home}/.m2/repository</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>Server Deploy</id>
-            <distributionManagement>
-                <repository>
-                    <id>serval-releases</id>
-                    <url>http://archibald.uni.lu:3008/archiva/repository/serval-releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>serval-snapshots</id>
-                    <url>http://archibald.uni.lu:3008/archiva/repository/serval-snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iotlab-snapshot</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
 </project>

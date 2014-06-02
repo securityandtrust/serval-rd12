@@ -3,7 +3,7 @@
 
   <groupId>lu.snt.iot.serval.rn12</groupId>
   <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.1</version>
     <modules>
         <module>../lu.snt.iot.serval.rn12.framework</module>
         <module>../lu.snt.iot.serval.rn12.ecl</module>
@@ -13,9 +13,9 @@
         <module>../lu.snt.iot.serval.rn12.acm</module>
         <module>../lu.snt.iot.serval.rn12.modem</module>
         <module>../lu.snt.iot.serval.rn12.doorSensor</module>
-        <module>../lu.snt.iot.serval.rn12.doorlock</module>
         <module>../lu.snt.iot.serval.rn12.karotz</module>
         <module>../lu.snt.iot.serval.rn12.display</module>
+        <module>../lu.snt.iot.serval.rn12.haproxy</module>
         <module>../lu.snt.iot.serval.rn12.runtime</module>
     </modules>
     <packaging>pom</packaging>
@@ -24,21 +24,9 @@
   <name>Serval::ResearchersNights::ROOT</name>
 
     <properties>
-        <kevoree.version>1.9.0-SNAPSHOT</kevoree.version>
+        <kevoree.version>2.0.0-ALPHA</kevoree.version>
         <slf4j.version>1.6.4</slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- EXAMPLE FOR MYSQL -->
-        <sonar.jdbc.url>
-            jdbc:derby://10.91.1.137:1528/sonar
-        </sonar.jdbc.url>
-        <!-- sonar.jdbc.driverClassName>com.derby.jdbc.Driver</sonar.jdbc.driverClassName-->
-        <sonar.jdbc.username>sonar</sonar.jdbc.username>
-        <sonar.jdbc.password>sonar</sonar.jdbc.password>
-
-        <!-- optional URL to server. Default value is http://localhost:9000 -->
-        <sonar.host.url>
-            http://10.91.1.137:3002
-        </sonar.host.url>
     </properties>
 
     <dependencies>
@@ -84,13 +72,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Felix BnD plugin : allow Bundle packaging : generate OSGi JAR  -->
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.5</version>
-                <extensions>true</extensions>
-            </plugin>
             <!-- Java compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -125,16 +106,14 @@
             <id>kevoree-snapshots</id>
             <url>http://maven.kevoree.org/snapshots</url>
         </repository>
-        <!--
         <repository>
-            <id>serval-snapshots</id>
-            <url>http://archibald.uni.lu/maven/serval-snapshots</url>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.org/release</url>
         </repository>
         <repository>
-            <id>serval-releases</id>
-            <url>http://archibald.uni.lu/maven/serval-releases/</url>
+            <id>iotlab-snapshots</id>
+            <url>http://maven.sntiotlab.org/snapshot</url>
         </repository>
-        -->
     </repositories>
 
     <pluginRepositories>
@@ -148,38 +127,15 @@
         </pluginRepository>
     </pluginRepositories>
 
-
-    <profiles>
-        <profile>
-            <id>Local Deploy</id>
-            <activation><activeByDefault>true</activeByDefault></activation>
-            <distributionManagement>
-            <repository>
-                <id>serval-releases-local</id>
-                <url>file://${user.home}/.m2/repository</url>
-            </repository>
-            <snapshotRepository>
-                <id>serval-snapshots-local</id>
-                <url>file://${user.home}/.m2/repository</url>
-            </snapshotRepository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>Server Deploy</id>
-            <distributionManagement>
-            <repository>
-                <id>serval-releases</id>
-                <url>http://archibald.uni.lu:3008/archiva/repository/serval-releases/</url>
-            </repository>
-                <snapshotRepository>
-                    <id>serval-snapshots</id>
-                    <url>http://archibald.uni.lu:3008/archiva/repository/serval-snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-    </profiles>
-
-
-
+    <distributionManagement>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iotlab-snapshot</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

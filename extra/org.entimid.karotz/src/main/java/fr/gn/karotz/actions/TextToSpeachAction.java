@@ -21,17 +21,19 @@ public class TextToSpeachAction implements KarotzCommand {
 
     private Languages language;
     private String text;
+    private Kernel kernel;
 
-    public TextToSpeachAction(String text, Languages language) {
+    public TextToSpeachAction(Kernel k, String text, Languages language) {
         this.language = language;
         this.text = text;
+        this.kernel = k;
     }
 
 
     @Override
     public String getCommand() {
         try {
-            return Kernel.getServerAddress() + "tts?action=speak&lang=" + language + "&text=" + URLEncoder.encode(text, "UTF-8") + "&interactiveid=" + Kernel.getInteractiveId();
+            return kernel.getServerAddress() + "tts?action=speak&lang=" + language + "&text=" + URLEncoder.encode(text, "UTF-8") + "&interactiveid=" + kernel.getInteractiveId();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

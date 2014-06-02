@@ -31,6 +31,18 @@ function connectWebSocket() {
                 content.prepend('<div class="error"><u><b>[['+json.logLevel.toUpperCase()+']] From</b> '+json.logFrom+' <b>on</b> '+json.logDate+' at '+json.logTime+' :</u><br/>'+json.logMessage+'</div>');
                 console.log('LogLevel not recognized:' + json.logLevel.toUpperCase());
         }
+		
+		if ( content.hasChildNodes() )
+		{
+		    if ( content.childNodes.length >= 200 )
+		    {
+				for (i = 0; i < 50; i++) 
+				{ 
+				   content.removeChild( content.lastChild );       
+				}
+		    } 
+		}
+		
        // alert("Message is received...");
     };
 

@@ -14,10 +14,8 @@ package lu.snt.iot.serval.rn12.runtime;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
-import scala.actors.threadpool.Arrays;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -15,9 +15,11 @@ import fr.gn.karotz.utils.KarotzCommand;
 public class InteractiveCommand implements KarotzCommand {
 
     private InteractiveAction action;
+    private Kernel kernel;
 
-    public InteractiveCommand(InteractiveAction action) {
+    public InteractiveCommand(Kernel k, InteractiveAction action) {
         this.action = action;
+        this.kernel = k;
     }
 
 
@@ -26,18 +28,18 @@ public class InteractiveCommand implements KarotzCommand {
             case START: {
                 String parameterChain = "";
 
-                parameterChain += "apikey=" + Kernel.getApiKey();
-                parameterChain += "&installid=" + Kernel.getInstallId();
+                parameterChain += "apikey=" + kernel.getApiKey();
+                parameterChain += "&installid=" + kernel.getInstallId();
                 parameterChain += "&once=" + (long) (Math.random() * 1000000000);
                 parameterChain += "&timestamp=" + (System.currentTimeMillis() / 1000);
 
-                String signedRequest = Kernel.getSigner().sign(parameterChain);
+                String signedRequest = kernel.getSigner().sign(parameterChain);
 
-                return Kernel.getServerAddress() + "start?" + signedRequest;
+                return kernel.getServerAddress() + "start?" + signedRequest;
             }
 
             case STOP: {
-                return Kernel.getServerAddress() + "interactivemode?action=stop&interactiveid=" + Kernel.getInteractiveId();
+                return kernel.getServerAddress() + "interactivemode?action=stop&interactiveid=" + kernel.getInteractiveId();
             }
 
             default: return null;

@@ -25,12 +25,14 @@ public class LedAction implements KarotzCommand {
     private Color color;
     private long duration;
     private long frequency;
+    private Kernel kernel;
 
-    private LedAction() {
+    private LedAction(Kernel k) {
+        kernel = k;
     }
 
-    public static LedAction createPulseCommand(Color c, long frequency, long duration) {
-        LedAction command = new LedAction();
+    public static LedAction createPulseCommand(Kernel k, Color c, long frequency, long duration) {
+        LedAction command = new LedAction(k);
         command.action = PULSE;
         command.duration = duration;
         command.frequency = frequency;
@@ -38,8 +40,8 @@ public class LedAction implements KarotzCommand {
         return command;
     }
 
-    public static LedAction createFadeCommand(Color c, long duration) {
-        LedAction command = new LedAction();
+    public static LedAction createFadeCommand(Kernel k, Color c, long duration) {
+        LedAction command = new LedAction(k);
         command.action = FADE;
         command.duration = duration;
         command.color = c;
@@ -51,8 +53,8 @@ public class LedAction implements KarotzCommand {
      * @param c the color requested.
      * @return The {@link KarotzCommand} to be passed to {@link fr.gn.karotz.Karotz#send(KarotzCommand)}
      */
-    public static LedAction createLightCommand(Color c) {
-        LedAction command = new LedAction();
+    public static LedAction createLightCommand(Kernel k, Color c) {
+        LedAction command = new LedAction(k);
         command.action = LIGHT;
         command.color = c;
         return command;
@@ -61,7 +63,7 @@ public class LedAction implements KarotzCommand {
 
     @Override
     public String getCommand() {
-        String rootAddr = Kernel.getServerAddress() + "led?action=" + action;
+        String rootAddr = kernel.getServerAddress() + "led?action=" + action;
 
         if (action.equals(PULSE)) {
             rootAddr += "&color=" + Integer.toHexString(color.getRGB()).substring(2);
@@ -76,7 +78,7 @@ public class LedAction implements KarotzCommand {
             }
         }
 
-        rootAddr += "&interactiveid=" + Kernel.getInteractiveId();
+        rootAddr += "&interactiveid=" + kernel.getInteractiveId();
 
         return rootAddr;
     }

@@ -1,0 +1,5 @@
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}"
+merge "mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.display/1.0.0-SNAPSHOT"
+
+addNode node0 : JavaSENode
+addComponent ds@node0 : DisplayServer

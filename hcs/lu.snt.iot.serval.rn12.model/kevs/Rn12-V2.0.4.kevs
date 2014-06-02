@@ -1,0 +1,88 @@
+{
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.api/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.socketChannels/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.gossiperNetty/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.spray/1.8.4'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.serialCT/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.etherpad/1.8.4'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/1.8.4'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nioChannels/1.8.4'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/1.8.4'
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.grapher/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel.atom/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/1.8.4'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS/1.8.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.webserver.tjws/1.8.4'
+merge 'mvn:org.kevoree.extra/org.kevoree.extra.osgi.rxtx/2.2.1'
+addNode node0:JavaSENode
+ {
+  addComponent TYDOM360148@node0 : TYDOM360 {serialPortName='/dev/ttyACM0'}
+  addComponent TYXIA142990@node0 : TYXIA142 {device_id='168257'}
+  addComponent HomeCareS678@node0 : HomeCareSystem {}
+  addComponent KarotzCmp103@node0 : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+  addComponent Emergency131@node0 : EmergencyCallList {}
+  addComponent PersonalH306@node0 : PersonalHealthRecord {}
+  addComponent IconGI505306@node0 : IconGI505M {serialPort='/dev/ttyHS2',pincode='1828'}
+addChannel defMSG888 : defMSG {}
+addChannel defMSG570 : defMSG {}
+addChannel defMSG145 : defMSG {}
+addChannel defMSG852 : defMSG {}
+addChannel defMSG655 : defMSG {}
+addChannel defMSG68 : defMSG {}
+addChannel defMSG653 : defMSG {}
+addChannel defMSG605 : defMSG {}
+addChannel defMSG752 : defMSG {}
+addChannel defMSG576 : defMSG {}
+bind TYXIA142990.x2dEvent@node0 => defMSG888
+bind TYDOM360148.receive@node0 => defMSG888
+bind HomeCareS678.needHelp@node0 => defMSG570
+bind TYXIA142990.push_M1@node0 => defMSG570
+bind KarotzCmp103.tts@node0 => defMSG145
+bind HomeCareS678.intCom@node0 => defMSG145
+bind Emergency131.getList@node0 => defMSG852
+bind HomeCareS678.eclProvider@node0 => defMSG852
+bind PersonalH306.getRecord@node0 => defMSG655
+bind HomeCareS678.phrProvider@node0 => defMSG655
+bind HomeCareS678.ecl@node0 => defMSG68
+bind Emergency131.ECL@node0 => defMSG68
+bind HomeCareS678.phr@node0 => defMSG653
+bind PersonalH306.PHR@node0 => defMSG653
+bind HomeCareS678.doorSensor@node0 => defMSG605
+bind TYXIA142990.push_M2@node0 => defMSG605
+bind HomeCareS678.extCom@node0 => defMSG752
+bind HomeCareS678.textReceived@node0 => defMSG576
+bind IconGI505306.msgReceived@node0 => defMSG576
+bind IconGI505306.sendWithAck@node0 => defMSG752
+updateDictionary defMSG888 
+updateDictionary defMSG570 
+updateDictionary defMSG145 
+updateDictionary defMSG852 
+updateDictionary defMSG655 
+updateDictionary defMSG68 
+updateDictionary defMSG653 
+updateDictionary defMSG605 
+updateDictionary defMSG752 
+updateDictionary defMSG576 
+updateDictionary TYDOM360148@node0 
+updateDictionary TYXIA142990@node0 
+updateDictionary HomeCareS678@node0 
+updateDictionary KarotzCmp103@node0 
+updateDictionary Emergency131@node0 
+updateDictionary PersonalH306@node0 
+updateDictionary IconGI505306@node0 
+}
+
+addGroup sync:NanoRestGroup
+addToGroup sync node0
+}

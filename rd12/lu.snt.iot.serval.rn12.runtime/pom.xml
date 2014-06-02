@@ -7,12 +7,12 @@
         <artifactId>lu.snt.iot.serval.rn12.runtime</artifactId>
         <packaging>jar</packaging>
         <name>Serval::ResearchersNights::Runtime</name>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0</version>
 
         <parent>
             <artifactId>org.kevoree.platform.root</artifactId>
             <groupId>org.kevoree.platform</groupId>
-            <version>1.8.9-SNAPSHOT</version>
+            <version>2.0.0-ALPHA</version>
         </parent>
 
         <properties>
@@ -111,6 +111,16 @@
 
             </plugins>
         </build>
+    <distributionManagement>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iotlab-snapshot</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 
     </project>

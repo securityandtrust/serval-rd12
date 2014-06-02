@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
+        <groupId>lu.snt.iot.serval.rn12</groupId>
+        <version>2.0-SNAPSHOT</version>
+        <relativePath>../lu.snt.iot.serval.rn12.root/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>lu.snt.iot.serval.rn12.display</artifactId>
+    <name>Serval::ResearchersNights::Display</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${project.build.directory}/classes"/>
+                                <zip destfile="${project.build.directory}/classes/emb.zip"
+                                     basedir="${basedir}/src/main/knode"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/knode</directory>
+            </resource>
+        </resources>
+    </build>
+
+
+</project>

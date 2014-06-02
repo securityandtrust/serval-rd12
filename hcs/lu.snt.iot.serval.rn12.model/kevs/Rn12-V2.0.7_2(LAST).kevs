@@ -1,0 +1,106 @@
+ {
+addRepo "http://maven.kevoree.org/archiva/repository/snapshots/"
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "file:///Users/gregory.nain/.m2/repository"
+addRepo "http://repo1.maven.org/maven2"
+merge 'mvn:org.kevoree.library.javase/org.kevoree.library.javase.xmpp/1.8.9-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/1.8.9-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/1.8.9-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.hcs/1.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.phr/1.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.modem/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/1.8.9-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/1.8.9-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS.proxy/1.8.9-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttpAutoDiscovery/1.8.9-SNAPSHOT'
+merge 'mvn:org.entimid.library.deltadore/org.entimid.library.deltadore.x2d.cmp/3.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nanohttp/1.8.9-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.karotz/1.0.0-SNAPSHOT'
+merge 'mvn:lu.snt.iot.serval.rn12/lu.snt.iot.serval.rn12.ecl/1.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.nodeJS/1.8.9-SNAPSHOT'
+addNode node0:JavaSENode
+updateDictionary node0{logLevel="DEBUG",coreLogLevel="INFO"}
+ {
+  addComponent Modem17@node0 : XmppModem {login='entimid@gmail.com',password='entimidpass'}
+  addComponent TYXIA142990@node0 : TYXIA142 {device_id='168257'}
+  addComponent TYDOM360569@node0 : TYDOM360 {serialPortName='/dev/ttyACM0'}
+  addComponent KarotzCmp103@node0 : KarotzCmp {secretKey='87683e1e-c478-4c2a-b46e-f22bd6aca916',applicationKey='ae5e7b12-bea8-4c5a-80d5-cd88576a95e5',installationId='2b96ef18-b795-4b62-b528-29019c0e84d7'}
+  addComponent Emergency131@node0 : EmergencyCallList {}
+  addComponent PersonalH306@node0 : PersonalHealthRecord {}
+  addComponent IconGI505550@node0 : IconGI505M3 {serialPort='/dev/wmodem0',pincode='1828'}
+  addComponent HomeCareS678@node0 : HomeCareSystem {}
+  addComponent MiniCox788@node0 : MiniCox {device_id='204019'}
+addChannel defMSG630 : defMSG {}
+addChannel defMSG94 : defMSG {}
+addChannel defMSG878 : defMSG {}
+addChannel defMSG410 : defMSG {}
+addChannel defMSG475 : defMSG {}
+addChannel defMSG770 : defMSG {}
+addChannel defMSG10 : defMSG {}
+addChannel defMSG685 : defMSG {}
+addChannel defMSG346 : defMSG {}
+addChannel defMSG654 : defMSG {}
+addChannel defMSG369 : defMSG {}
+addChannel defMSG653 : defMSG {}
+addChannel defMSG125 : defMSG {}
+bind Modem17.sendWithAck@node0 => defMSG630
+bind HomeCareS678.extCom@node0 => defMSG630
+bind KarotzCmp103.tts@node0 => defMSG94
+bind HomeCareS678.intCom@node0 => defMSG94
+bind Emergency131.getList@node0 => defMSG878
+bind HomeCareS678.eclProvider@node0 => defMSG878
+bind PersonalH306.getRecord@node0 => defMSG410
+bind HomeCareS678.phrProvider@node0 => defMSG410
+bind TYXIA142990.x2dEvent@node0 => defMSG475
+bind TYDOM360569.receive@node0 => defMSG475
+bind HomeCareS678.textReceived@node0 => defMSG770
+bind Modem17.msgReceived@node0 => defMSG770
+bind HomeCareS678.needHelp@node0 => defMSG10
+bind TYXIA142990.push_M1@node0 => defMSG10
+bind HomeCareS678.doorSensor@node0 => defMSG685
+bind HomeCareS678.phr@node0 => defMSG346
+bind PersonalH306.PHR@node0 => defMSG346
+bind HomeCareS678.ecl@node0 => defMSG654
+bind Emergency131.ECL@node0 => defMSG654
+bind MiniCox788.open@node0 => defMSG685
+bind MiniCox788.close@node0 => defMSG685
+bind MiniCox788.x2dEvent@node0 => defMSG475
+bind TYXIA142990.push_M2@node0 => defMSG10
+bind IconGI505550.sendWithAck@node0 => defMSG630
+bind IconGI505550.msgReceived@node0 => defMSG770
+bind Modem17.ackIn@node0 => defMSG369
+bind IconGI505550.ackOut@node0 => defMSG369
+bind IconGI505550.ackIn@node0 => defMSG653
+bind Modem17.ackOut@node0 => defMSG653
+bind IconGI505550.send@node0 => defMSG125
+bind HomeCareS678.extComNoAck@node0 => defMSG125
+bind Modem17.send@node0 => defMSG125
+updateDictionary defMSG630 
+updateDictionary defMSG94 
+updateDictionary defMSG878 
+updateDictionary defMSG410 
+updateDictionary defMSG475 
+updateDictionary defMSG770 
+updateDictionary defMSG10 
+updateDictionary defMSG685 
+updateDictionary defMSG346 
+updateDictionary defMSG654 
+updateDictionary defMSG369 
+updateDictionary defMSG653 
+updateDictionary defMSG125 
+updateDictionary Modem17@node0 
+updateDictionary TYXIA142990@node0 
+updateDictionary TYDOM360569@node0 
+updateDictionary KarotzCmp103@node0 
+updateDictionary Emergency131@node0 
+updateDictionary PersonalH306@node0 
+updateDictionary IconGI505550@node0 
+updateDictionary HomeCareS678@node0 
+updateDictionary MiniCox788@node0 
+}
+
+addGroup sync:NanoRestGroup
+addToGroup sync node0
+}

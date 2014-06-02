@@ -89,7 +89,7 @@ public class AutomaticSpeechRecognitionTest {
             jp.send(new KarotzCommand() {
                 @Override
                 public String getCommand() throws UnknownHostException {
-                    return "http://api.karotz.com/api/karotz/asr?grammar=yes,no&url=http://"+ InetAddress.getLocalHost().getHostAddress()+":3546/&interactiveid=" + Kernel.getInteractiveId();
+                    return "http://api.karotz.com/api/karotz/asr?grammar=yes,no&url=http://"+ InetAddress.getLocalHost().getHostAddress()+":3546/&interactiveid=" + jp.getKernel().getInteractiveId();
                 }
             });
 

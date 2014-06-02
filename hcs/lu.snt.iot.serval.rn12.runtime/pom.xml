@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>lu.snt.iot.serval.rn12</groupId>
+        <artifactId>lu.snt.iot.serval.rn12.runtime</artifactId>
+        <packaging>jar</packaging>
+        <name>Serval::ResearchersNights::Runtime</name>
+        <version>2.0</version>
+
+        <parent>
+            <artifactId>org.kevoree.platform.root</artifactId>
+            <groupId>org.kevoree.platform</groupId>
+            <version>3.5.7</version>
+        </parent>
+
+        <properties>
+            <kevoree.version>3.5.7</kevoree.version>
+        </properties>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.kevoree.platform</groupId>
+                <artifactId>org.kevoree.platform.standalone</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webbitserver</groupId>
+                <artifactId>webbit</artifactId>
+                <version>0.4.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kevoree.log</groupId>
+                <artifactId>org.kevoree.log</artifactId>
+                <version>RELEASE</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <resources>
+                <resource>
+                    <directory>${basedir}/src/main/resources</directory>
+                </resource>
+            </resources>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <filters>
+                                    <filter>
+                                        <includes>
+                                            <include>org.slf4j:*</include>
+                                            <include>ch.qos.logback:*</include>
+                                            <include>org.kevoree</include>
+                                            <include>org.json</include>
+                                            <include>org.webbitserver</include>
+                                            <include>org.kevoree.tools:org.kevoree.tools.annotation.api</include>
+                                            <include>org.kevoree.tools:org.kevoree.tools.javase.framework</include>
+                                        </includes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                                <transformers>
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>lu.snt.iot.serval.rn12.runtime.MyApp</mainClass>
+                                    </transformer>
+                                </transformers>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </build>
+    <distributionManagement>
+        <repository>
+            <id>iotlab-release</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iotlab-snapshot</id>
+            <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    </project>
