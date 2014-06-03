@@ -14,6 +14,7 @@ import org.kevoree.api.ModelService;
 import org.kevoree.api.Port;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.api.handler.UpdateCallback;
+import org.kevoree.api.handler.UpdateContext;
 import org.kevoree.log.Log;
 
 import java.io.File;
@@ -29,6 +30,9 @@ public class HomeCareSystem {
     private boolean starting = true;
     private Alert ongoingAlert;
     private List<Alert> pastAlerts;
+
+    @Param(optional = false)
+    String proxyCmpVersion;
 
     @KevoreeInject
     private Context context;
@@ -108,7 +112,9 @@ public class HomeCareSystem {
         //KevScriptEngine engine = kevScriptService.createKevScriptEngine();
         if(activate) {
 
-            kscript.append("include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.proxy:2.0\n");
+            kscript.append("include mvn:lu.snt.iot.serval.rn12:lu.snt.iot.serval.rn12.proxy:");
+            kscript.append(proxyCmpVersion);
+            kscript.append("\n");
             kscript.append("add selenia99.proxy : HaProxy\n");
             Log.debug("Running kevscript:"+kscript.toString());
             modelService.submitScript(kscript.toString(), new UpdateCallback(){
@@ -246,17 +252,17 @@ public class HomeCareSystem {
 
         modelService.registerModelListener(new ModelListener() {
             @Override
-            public boolean preUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+            public boolean preUpdate(UpdateContext context) {
                 return true;
             }
 
             @Override
-            public boolean initUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+            public boolean initUpdate(UpdateContext context) {
                 return true;
             }
 
             @Override
-            public boolean afterLocalUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+            public boolean afterLocalUpdate(UpdateContext context) {
                 return true;
             }
 
@@ -269,12 +275,12 @@ public class HomeCareSystem {
             }
 
             @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
+            public void preRollback(UpdateContext context) {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
+            public void postRollback(UpdateContext context) {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         });

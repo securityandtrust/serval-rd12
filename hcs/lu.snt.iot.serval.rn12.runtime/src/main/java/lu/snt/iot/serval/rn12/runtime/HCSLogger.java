@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class HCSLogger extends Log.Logger {
 
-    private StringBuilder logBuilder = new StringBuilder();
+   // private StringBuilder logBuilder;
     DateFormat getDayFormated = new SimpleDateFormat("d MMM yyyy");
     DateFormat getTimeFormated = new SimpleDateFormat("HH:mm:ss:S");
 
@@ -22,9 +22,10 @@ public class HCSLogger extends Log.Logger {
     }
 
     @Override
-    public void log(int level, String message, Throwable ex) {
+    public synchronized void log(int level, String message, Throwable ex) {
         super.log(level, message, ex);
 
+        StringBuilder logBuilder = new StringBuilder();
         Date date = new Date(System.currentTimeMillis());
         logBuilder.append('{');
 
@@ -74,7 +75,5 @@ public class HCSLogger extends Log.Logger {
         logBuilder.append('}');
 
         MyApp.getInstance().getWebSocket().handleMessage(logBuilder.toString());
-        logBuilder.delete(0, logBuilder.length());
-
     }
 }

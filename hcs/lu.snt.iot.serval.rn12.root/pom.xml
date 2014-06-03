@@ -3,7 +3,7 @@
 
     <groupId>lu.snt.iot.serval.rn12</groupId>
     <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
-    <version>2.0</version>
+    <version>2.1-SNAPSHOT</version>
     <modules>
         <module>../lu.snt.iot.serval.rn12.framework</module>
         <module>../lu.snt.iot.serval.rn12.ecl</module>
@@ -21,8 +21,8 @@
     <name>Serval::ResearchersNights::ROOT</name>
 
     <properties>
-        <kevoree.version>3.5.7</kevoree.version>
-        <kevoreelibrary.version>3.5.3</kevoreelibrary.version>
+        <kevoree.version>3.6.2</kevoree.version>
+        <kevoreelibrary.version>3.6.0</kevoreelibrary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -83,33 +83,19 @@
 
     <repositories>
         <repository>
-            <id>kevoree-release</id>
-            <url>http://maven.kevoree.org/release</url>
-        </repository>
-        <repository>
             <id>kevoree-snapshots</id>
-            <url>http://maven.kevoree.org/snapshots</url>
-        </repository>
-        <repository>
-            <id>iotlab-release</id>
-            <url>http://maven.sntiotlab.org/release</url>
-        </repository>
-        <repository>
-            <id>iotlab-snapshots</id>
-            <url>http://maven.sntiotlab.org/snapshot</url>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>plugin.kevoree-github</id>
-            <url>http://maven.kevoree.org/release</url>
-        </pluginRepository>
-        <pluginRepository>
             <id>plugin.kevoree-snapshots</id>
-            <url>http://maven.kevoree.org/snapshots</url>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </pluginRepository>
     </pluginRepositories>
+    <!--
+
 
     <distributionManagement>
         <repository>
@@ -121,5 +107,5 @@
             <url>http://maven.sntiotlab.lu/archiva/repository/sntiotlab-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
-
+    -->
 </project>
