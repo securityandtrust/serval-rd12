@@ -17,7 +17,11 @@
 #
 
 export MAVEN_OPTS="-Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024m -XX:MaxHeapSize=1024m"
-export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+location=`pwd`
+cd lu.snt.iot.serval.rn12.root
 mvn release:clean
 mvn release:prepare
 mvn release:perform
+
+cd $location
