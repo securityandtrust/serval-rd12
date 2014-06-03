@@ -6,19 +6,11 @@
         <artifactId>lu.snt.iot.serval.rn12.runtime</artifactId>
         <packaging>jar</packaging>
         <name>Serval::ResearchersNights::Runtime</name>
-<!--
-        <version>2.1-SNAPSHOT</version>
-        <groupId>lu.snt.iot.serval.rn12</groupId>
-        <parent>
-            <artifactId>org.kevoree.platform.root</artifactId>
-            <groupId>org.kevoree.platform</groupId>
-            <version>${kevoree.version}</version>
-        </parent>
--->
+
     <parent>
         <artifactId>lu.snt.iot.serval.rn12.root</artifactId>
         <groupId>lu.snt.iot.serval.rn12</groupId>
-        <version>2.1</version>
+        <version>2.2-SNAPSHOT</version>
         <relativePath>../lu.snt.iot.serval.rn12.root/pom.xml</relativePath>
     </parent>
 
