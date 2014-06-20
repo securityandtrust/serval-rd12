@@ -1,0 +1,24 @@
+//sample of KevScript configuration
+repo "http://repo1.maven.org/maven2"
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:latest
+add node0 : JavaNode
+add sync : WSGroup
+attach node0 sync
+
+add node0.switch1 : ToyUpDownStopSwitch
+add node0.innerBlinds : XBoard
+
+add upChannel, downChannel, stopChannel : AsyncBroadcast
+
+set node0.innerBlinds.address = 'http://192.168.1.111'
+
+bind node0.switch1.upPressed upChannel
+bind node0.switch1.downPressed downChannel
+bind node0.switch1.stopPressed stopChannel
+
+bind node0.innerBlinds.up upChannel
+bind node0.innerBlinds.down downChannel
+bind node0.innerBlinds.stop stopChannel

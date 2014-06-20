@@ -14,6 +14,7 @@
         <module>../lu.snt.iot.serval.rn12.display</module>
         <module>../lu.snt.iot.serval.rn12.haproxy</module>
         <module>../lu.snt.iot.serval.rn12.runtime</module>
+        <module>../lu.snt.iot.serval.rn12.xboard</module>
     </modules>
     <packaging>pom</packaging>
 
